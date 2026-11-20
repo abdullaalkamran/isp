@@ -29,7 +29,9 @@ export function EmptyState({ title, body, icon }: { title: string; body?: string
 
 export function ErrorState({ error, onRetry }: { error?: unknown; onRetry?: () => void }) {
   const { t } = useTranslation()
-  const msg = error instanceof Error ? error.message : undefined
+  // Supabase/PostgREST errors are plain objects, not Error instances
+  const raw = (error as { message?: unknown } | null | undefined)?.message
+  const msg = typeof raw === 'string' ? raw : undefined
   return (
     <div role="alert" className="flex flex-col items-center rounded-lg border border-red-200 bg-red-50 px-6 py-10 text-center">
       <AlertTriangle className="mb-3 h-8 w-8 text-danger" />

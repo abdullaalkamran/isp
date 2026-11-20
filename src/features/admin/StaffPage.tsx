@@ -46,7 +46,7 @@ export function StaffPage() {
     queryKey: ['admin', 'staff'],
     queryFn: async () => {
       const { data, error } = await supabase.from('profiles')
-        .select('id, full_name, email, phone, is_active, last_login_at, user_roles(roles(code))').order('created_at', { ascending: false })
+        .select('id, full_name, email, phone, is_active, last_login_at, user_roles!user_roles_user_id_fkey(roles(code))').order('created_at', { ascending: false })
       if (error) throw error
       // customers have their own portal and are managed on the Customers screen
       return (data as unknown as Row[]).filter((r) => !(r.user_roles.length > 0 && r.user_roles.every((x) => x.roles?.code === 'customer')))
