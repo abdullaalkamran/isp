@@ -6,7 +6,7 @@ React + TypeScript + Vite + Tailwind, Supabase (PostgreSQL, Auth, RLS, Edge Func
 
 ## Run it
 
-1. Create a Supabase project. Apply migrations in order: `supabase db push` (or paste `supabase/migrations/*.sql` into the SQL editor).
+1. Create a Supabase project. Apply migrations in order: `supabase db push` (or paste `supabase/migrations/*.sql` into the SQL editor). **`0015_service_role_grants.sql` is required**: without it the Edge Functions (`admin-users`, `customer-login`, `network-admin`, `router-worker`, `payment-init`, `payment-webhook`) cannot read or write tables on new Supabase projects and fail with permission errors (e.g. creating users).
 2. `cp .env.example .env`, set `VITE_SUPABASE_URL` and `VITE_SUPABASE_ANON_KEY` (public anon key only; never put a service-role key in the frontend).
 3. In Supabase Auth, create your first user, then make them Super Admin (SQL editor, runs as `postgres`):
    ```sql
@@ -35,7 +35,7 @@ React + TypeScript + Vite + Tailwind, Supabase (PostgreSQL, Auth, RLS, Edge Func
 
 ## Migrations (apply in order in the Supabase SQL editor)
 
-`0001`–`0009` base schema · `0010` customer balance · `0011` router queue on manual status/package change · `0012` collections RPCs · `0013` reports · `0014` router queue claim/complete.
+`0001`–`0009` base schema · `0010` customer balance · `0011` router queue on manual status/package change · `0012` collections RPCs · `0013` reports · `0014` router queue claim/complete · `0015` service-role grants (required for Edge Functions).
 
 ## Edge Functions
 
