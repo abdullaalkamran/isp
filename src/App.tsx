@@ -14,6 +14,8 @@ import { WorkerDashboard } from '@/features/worker/WorkerDashboard'
 import { StaffPage } from '@/features/admin/StaffPage'
 import { AreasPage } from '@/features/admin/AreasPage'
 import { PackagesPage } from '@/features/admin/PackagesPage'
+import { CustomersPage } from '@/features/admin/customers/CustomersPage'
+import { CustomerDetailPage } from '@/features/admin/customers/CustomerDetailPage'
 import { ServicesPage } from '@/features/admin/ServicesPage'
 import { CustomerDashboard } from '@/features/customer/CustomerDashboard'
 import type { Portal } from '@/types'
@@ -40,8 +42,10 @@ const ADMIN_PAGES: [string, string[], React.ReactElement][] = [
   ['areas', ['areas.manage', 'customers.read_all'], <AreasPage />],
   ['packages', ['packages.manage', 'subscriptions.read'], <PackagesPage />],
   ['services', ['subscriptions.read'], <ServicesPage />],
+  ['customers', ['customers.read_all'], <CustomersPage />],
+  ['customers/:id', ['customers.read_all'], <CustomerDetailPage />],
 ]
-const BUILT = new Set(ADMIN_PAGES.map(([p]) => `/admin/${p}`))
+const BUILT = new Set(ADMIN_PAGES.map(([p]) => `/admin/${p}`.replace('/:id', '')))
 
 /** Every nav entry gets a permission-guarded route; modules not yet built show an honest roadmap notice. */
 function portalRoutes(portal: Portal, home: React.ReactElement) {

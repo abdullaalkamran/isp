@@ -73,7 +73,9 @@
   "shared": {
     "all": "All",
     "activate": "Activate",
-    "deactivate": "Deactivate"
+    "deactivate": "Deactivate",
+    "prev": "Previous",
+    "next": "Next"
   },
   "areas": {
     "subtitle": "Service areas and coverage",
@@ -119,5 +121,47 @@
     "activePackages": "Active packages",
     "priceRange": "Price range",
     "subscribers": "Subscribers"
+  },
+  "customers": {
+    "subtitle": "Search, add and manage customers",
+    "add": "Add customer",
+    "edit": "Edit customer",
+    "empty": "No customers yet",
+    "searchPlaceholder": "Name, phone or customer ID",
+    "code": "Customer ID",
+    "fullName": "Full name",
+    "phone": "Mobile",
+    "altPhone": "Alternate mobile",
+    "area": "Area",
+    "status": "Status",
+    "address": "Address",
+    "road": "Road / block / house",
+    "type": "Type",
+    "residential": "Residential",
+    "business": "Business",
+    "installDate": "Installation date",
+    "agent": "Collection agent",
+    "technician": "Technician",
+    "nid": "NID number",
+    "total": "{{count}} customers",
+    "profile": "Profile",
+    "balance": "Balance",
+    "outstanding": "Outstanding",
+    "overdue": "Overdue",
+    "credit": "Advance credit",
+    "subscriptions": "Subscriptions",
+    "noSubs": "No subscriptions",
+    "invoices": "Recent invoices",
+    "payments": "Recent payments",
+    "tickets": "Recent tickets",
+    "notes": "Internal notes",
+    "notePlaceholder": "Add a note (staff only)",
+    "none": "Nothing yet",
+    "activate": "Activate",
+    "suspend": "Suspend",
+    "deactivate": "Deactivate",
+    "archive": "Archive",
+    "confirmStatus": "Change status to “{{status}}”?",
+    "archiveNote": "Archived customers are hidden from the main list. Billing history is kept."
   }
 }
