@@ -14,6 +14,10 @@ import { Card, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { ConfirmDialog } from '@/components/ConfirmDialog'
 import { ErrorState, LoadingBlock, PageHeader, StatusBadge } from '@/components/StateViews'
+import { Modal } from '@/components/ui/dialog'
+import { generatePassword } from '../PppoePage'
+import { callFn } from '../networkApi'
+import { Field, ServerError } from '@/components/FormBits'
 import { CustomerFormModal } from './CustomerForm'
 import type { CustomerStatus } from './useCustomers'
 
@@ -34,6 +38,10 @@ export function CustomerDetailPage() {
   const [editing, setEditing] = useState(false)
   const [statusTarget, setStatusTarget] = useState<CustomerStatus | null>(null)
   const [statusErr, setStatusErr] = useState<string | null>(null)
+  const [loginOpen, setLoginOpen] = useState(false)
+  const [loginPw, setLoginPw] = useState('')
+  const [loginErr, setLoginErr] = useState<string | null>(null)
+  const [loginDone, setLoginDone] = useState<string | null>(null)
   const [note, setNote] = useState('')
   const [noteErr, setNoteErr] = useState<string | null>(null)
 
@@ -111,6 +119,10 @@ export function CustomerDetailPage() {
     },
     onSuccess: () => { setStatusTarget(null); refresh() }, onError: (e) => setStatusErr(errMsg(e)),
   })
+  const createLogin = useMutation({
+    mutationFn: async () => { await callFn('admin-users', { action: 'create_customer_login', customer_id: id, password: loginPw }) },
+    onSuccess: () => { setLoginDone(loginPw); setLoginErr(null); refresh() }, onError: (e) => setLoginErr(errMsg(e)),
+  })
   const addNote = useMutation({
     mutationFn: async () => {
       const { error } = await supabase.from('customer_notes').insert({ customer_id: id, note: note.trim(), created_by: access?.user_id })
@@ -149,6 +161,7 @@ export function CustomerDetailPage() {
           <Row k={t('customers.type')} v={t(`customers.${c.customer_type}`)} />
           <Row k={t('customers.installDate')} v={c.installation_date ? formatDate(c.installation_date, lang) : ''} />
           {can(access, 'customers.view_nid') && <Row k={t('customers.nid')} v={nid.data} />}
+          <Row k={t('customers.portalLogin')} v={c.user_id ? t('customers.hasLogin') : (canUpdate ? <Button size="sm" variant="outline" onClick={() => { setLoginPw(generatePassword()); setLoginErr(null); setLoginDone(null); setLoginOpen(true) }}>{t('customers.createLogin')}</Button> : t('customers.noLogin'))} />
         </Section>
         {canBalance && (
           <Section title={t('customers.balance')}>
@@ -227,6 +240,17 @@ export function CustomerDetailPage() {
         </Section>
       )}
 
+      <Modal open={loginOpen} onOpenChange={(o) => { if (!o) setLoginOpen(false) }} className="max-w-md" title={t('customers.createLogin')} description={t('customers.loginNote')}>
+        {loginDone ? (<>
+          <p className="mb-2 text-sm">{t('customers.loginCreated')}</p>
+          <p className="mb-4 rounded-md bg-muted p-3 font-mono text-sm">{c.customer_code}<br />{loginDone}</p>
+          <div className="flex justify-end"><Button onClick={() => setLoginOpen(false)}>{tc('actions.close')}</Button></div></>) : (<>
+          <ServerError message={loginErr} />
+          <div className="mb-4"><Field label={t('users.password')} hint={tc('validation.passwordMin')}><div className="flex gap-2"><Input autoComplete="off" value={loginPw} onChange={(e) => setLoginPw(e.target.value)} />
+            <Button type="button" variant="outline" onClick={() => setLoginPw(generatePassword())}>{t('pppoe.generate')}</Button></div></Field></div>
+          <div className="flex justify-end gap-2"><Button variant="outline" onClick={() => setLoginOpen(false)} disabled={createLogin.isPending}>{tc('actions.cancel')}</Button>
+            <Button disabled={loginPw.length < 8 || createLogin.isPending} onClick={() => { setLoginErr(null); createLogin.mutate() }}>{tc('actions.save')}</Button></div></>)}
+      </Modal>
       <CustomerFormModal open={editing} onClose={() => setEditing(false)} customer={{ id }} />
       <ConfirmDialog open={statusTarget !== null} onClose={() => setStatusTarget(null)} busy={setStatus.isPending} error={statusErr}
         danger={statusTarget === 'suspended' || statusTarget === 'archived'}

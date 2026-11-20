@@ -59,7 +59,11 @@
     "signedOut": "You have been signed out.",
     "resetPrompt": "Enter your email above first.",
     "changeNumber": "Use a different number",
-    "customerHelp": "Use the mobile number registered with your cable/internet provider."
+    "customerHelp": "Use the mobile number registered with your cable/internet provider.",
+    "customerIdHelp": "Sign in with your Customer ID and the password given by your provider.",
+    "useOtp": "Sign in with mobile OTP instead",
+    "useCustomerId": "Sign in with Customer ID instead",
+    "tooMany": "Too many attempts. Please wait a few minutes and try again."
   },
   "nav": {
     "dashboard": "Dashboard",

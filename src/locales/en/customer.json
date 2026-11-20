@@ -18,5 +18,31 @@
     "linkAccount": "Link my account",
     "linked": "Account linked.",
     "payNow": "Pay now"
+  },
+  "services": {
+    "subtitle": "Your cable TV and internet services"
+  },
+  "packages": {
+    "subtitle": "Available packages. Ask for a change and our team will contact you.",
+    "month": "month",
+    "request": "Request this package",
+    "requestSubject": "Package change request",
+    "requested": "Request sent. You can follow it under Support."
+  },
+  "invoices": {
+    "subtitle": "Your bills",
+    "empty": "No invoices yet"
+  },
+  "pay": {
+    "subtitle": "Your unpaid bills",
+    "offline": "Online payment is not available yet. Please pay your bill to our collection agent or office; your balance updates as soon as the payment is recorded."
+  },
+  "payments": {
+    "subtitle": "Payments we have recorded for you"
+  },
+  "support": {
+    "subtitle": "Report a problem or ask for help",
+    "new": "New request",
+    "empty": "No requests yet"
   }
 }

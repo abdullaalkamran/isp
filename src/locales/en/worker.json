@@ -7,5 +7,31 @@
     "pendingJobs": "Pending jobs",
     "todayCollected": "Collected today",
     "noTasks": "No tasks assigned to you"
+  },
+  "customers": {
+    "subtitle": "Customers assigned to you",
+    "empty": "No customers assigned to you"
+  },
+  "tasks": {
+    "subtitle": "Open installation jobs and tickets"
+  },
+  "installations": {
+    "subtitle": "Your installation jobs",
+    "confirm": "Mark {{job}} as “{{status}}”?",
+    "acknowledged": "Customer has acknowledged the work"
+  },
+  "tickets": {
+    "subtitle": "Tickets assigned to you"
+  },
+  "collections": {
+    "subtitle": "Cash you have collected",
+    "record": "Record collection",
+    "recordNote": "Records a cash payment and a receipt for the customer.",
+    "deposit": "Submit deposit",
+    "confirmDeposit": "Submit a deposit of {{amount}}?",
+    "depositNote": "This hands in all the cash you currently hold. An accountant will confirm it."
+  },
+  "receipts": {
+    "subtitle": "Receipts for payments you collected"
   }
 }

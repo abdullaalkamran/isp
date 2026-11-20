@@ -9,6 +9,7 @@ interface AuthState {
   session: Session | null
   access: Access | null
   signInWithPassword: (email: string, password: string) => Promise<void>
+  signInWithCustomerId: (customerCode: string, password: string) => Promise<void>
   sendCustomerOtp: (phone: string) => Promise<void>
   verifyCustomerOtp: (phone: string, token: string) => Promise<void>
   signOut: () => Promise<void>
@@ -64,6 +65,19 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     async signInWithPassword(email, password) {
       const { error } = await supabase.auth.signInWithPassword({ email: email.trim(), password })
       if (error) throw error
+      const a = await loadAccess()
+      if (a && !a.is_active) { await supabase.auth.signOut(); throw new Error('inactive') }
+      void supabase.rpc('log_auth_event', { p_event: 'login' })
+    },
+    async signInWithCustomerId(customerCode, password) {
+      const { data, error } = await supabase.functions.invoke('customer-login', { body: { customer_code: customerCode, password } })
+      if (error || !data?.access_token) {
+        let code = 'invalid'
+        try { const j = await (error as { context?: Response } | null)?.context?.json(); if (j?.error === 'too_many_attempts') code = 'too_many_attempts' } catch { /* generic */ }
+        throw new Error(code)
+      }
+      const { error: se } = await supabase.auth.setSession({ access_token: data.access_token, refresh_token: data.refresh_token })
+      if (se) throw se
       const a = await loadAccess()
       if (a && !a.is_active) { await supabase.auth.signOut(); throw new Error('inactive') }
       void supabase.rpc('log_auth_event', { p_event: 'login' })

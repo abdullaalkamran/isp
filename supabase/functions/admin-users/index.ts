@@ -27,7 +27,10 @@ Deno.serve(async (req) => {
   const asCaller = createClient(url, anon, { global: { headers: { Authorization: authHeader } }, auth: { persistSession: false } })
   const { data: access, error: accessErr } = await asCaller.rpc('my_access')
   if (accessErr || !access) return json({ error: 'unauthorized' }, 401)
-  if (!access.is_active || !(access.permissions as string[]).includes('staff.manage')) return json({ error: 'forbidden' }, 403)
+  const perms = access.permissions as string[]
+  if (!access.is_active) return json({ error: 'forbidden' }, 403)
+  // staff.manage covers staff accounts; creating a customer's login only needs customers.update
+  const required = (a: string) => (a === 'create_customer_login' ? 'customers.update' : 'staff.manage')
   const callerIsSuper = (access.roles as string[]).includes('super_admin')
   const callerId = access.user_id as string
 
@@ -35,6 +38,7 @@ Deno.serve(async (req) => {
   let body: Record<string, unknown>
   try { body = await req.json() } catch { return json({ error: 'invalid_json' }, 400) }
   const action = String(body.action ?? '')
+  if (!perms.includes(required(action))) return json({ error: 'forbidden' }, 403)
 
   const roleId = async (code: string) => (await admin.from('roles').select('id').eq('code', code).single()).data?.id as string | undefined
   const targetIsSuper = async (userId: string) => {
@@ -100,6 +104,26 @@ Deno.serve(async (req) => {
     if (del.error || ins.error) return json({ error: (del.error ?? ins.error)!.message }, 400)
     await audit('user_role_changed', userId, { role })
     return json({ ok: true })
+  }
+
+  // Give an existing customer a login (Customer ID + password) without needing SMS
+  if (action === 'create_customer_login') {
+    const customerId = String(body.customer_id ?? ''); const password = String(body.password ?? '')
+    if (password.length < 8) return json({ error: 'password_too_short' }, 400)
+    const { data: c } = await admin.from('customers').select('id, phone, full_name, user_id, customer_code, archived_at').eq('id', customerId).single()
+    if (!c || c.archived_at) return json({ error: 'customer_not_found' }, 404)
+    if (c.user_id) return json({ error: 'customer_already_has_login' }, 400)
+    const digits = String(c.phone).replace(/\D/g, '')
+    const e164 = digits.startsWith('880') ? `+${digits}` : digits.startsWith('0') ? `+88${digits}` : `+880${digits}`
+    const { data, error } = await admin.auth.admin.createUser({ phone: e164, password, phone_confirm: true, user_metadata: { full_name: c.full_name } })
+    if (error || !data.user) return json({ error: error?.message ?? 'create_failed' }, 400)
+    const uid = data.user.id
+    const rid = await roleId('customer')
+    const link = await admin.from('customers').update({ user_id: uid }).eq('id', c.id)
+    const role = rid ? await admin.from('user_roles').insert({ user_id: uid, role_id: rid, assigned_by: callerId }) : { error: { message: 'customer role missing' } }
+    if (link.error || role.error) { await admin.auth.admin.deleteUser(uid); return json({ error: (link.error ?? role.error)!.message }, 400) }
+    await audit('customer_login_created', c.id, { customer_code: c.customer_code })
+    return json({ ok: true, customer_code: c.customer_code })
   }
 
   return json({ error: 'unknown_action' }, 400)

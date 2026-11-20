@@ -35,6 +35,9 @@ import { ReportsPage } from '@/features/admin/ReportsPage'
 import { NetworkPage } from '@/features/admin/NetworkPage'
 import { RoutersPage } from '@/features/admin/RoutersPage'
 import { PppoePage } from '@/features/admin/PppoePage'
+import { CustomerServicesPage, CustomerPackagesPage, CustomerInvoicesPage, CustomerPayPage, CustomerPaymentsPage, CustomerSupportPage } from '@/features/portal/CustomerPages'
+import { CustomerProfilePage, WorkerProfilePage } from '@/features/portal/ProfilePages'
+import { WorkerCustomersPage, WorkerTasksPage, WorkerInstallationsPage, WorkerTicketsPage, WorkerCollectionsPage, WorkerReceiptsPage } from '@/features/portal/WorkerPages'
 import { SubscriptionsPage } from '@/features/admin/SubscriptionsPage'
 import { ServicesPage } from '@/features/admin/ServicesPage'
 import { CustomerDashboard } from '@/features/customer/CustomerDashboard'
@@ -86,14 +89,41 @@ const ADMIN_PAGES: [string, string[], React.ReactElement][] = [
 ]
 const BUILT = new Set(ADMIN_PAGES.map(([p]) => `/admin/${p}`.replace('/:id', '')))
 
+const WORKER_PAGES: [string, string[], React.ReactElement][] = [
+  ['customers', ['customers.read_assigned'], <WorkerCustomersPage />],
+  ['tasks', ['tickets.read_assigned', 'installations.read_assigned'], <WorkerTasksPage />],
+  ['installations', ['installations.read_assigned'], <WorkerInstallationsPage />],
+  ['tickets', ['tickets.read_assigned'], <WorkerTicketsPage />],
+  ['collections', ['collections.record'], <WorkerCollectionsPage />],
+  ['receipts', ['payments.create_cash'], <WorkerReceiptsPage />],
+  ['notifications', [], <NotificationsPage />],
+  ['profile', [], <WorkerProfilePage />],
+]
+const CUSTOMER_PAGES: [string, string[], React.ReactElement][] = [
+  ['services', [], <CustomerServicesPage />],
+  ['packages', [], <CustomerPackagesPage />],
+  ['invoices', [], <CustomerInvoicesPage />],
+  ['pay', [], <CustomerPayPage />],
+  ['payments', [], <CustomerPaymentsPage />],
+  ['support', [], <CustomerSupportPage />],
+  ['notifications', [], <NotificationsPage />],
+  ['profile', [], <CustomerProfilePage />],
+]
+const PAGES: Record<Portal, [string, string[], React.ReactElement][]> = { admin: ADMIN_PAGES, worker: WORKER_PAGES, customer: CUSTOMER_PAGES }
+const BUILT_ALL: Record<Portal, Set<string>> = {
+  admin: BUILT,
+  worker: new Set(WORKER_PAGES.map(([p]) => `/worker/${p}`)),
+  customer: new Set(CUSTOMER_PAGES.map(([p]) => `/customer/${p}`)),
+}
+
 /** Every nav entry gets a permission-guarded route; modules not yet built show an honest roadmap notice. */
 function portalRoutes(portal: Portal, home: React.ReactElement) {
   return (
     <Route path={`/${portal}`} element={<RequirePortal portal={portal} />}>
       <Route element={<PortalLayout portal={portal} />}>
         <Route index element={portal === 'admin' ? <RequirePermission anyOf={['dashboard.view']}>{home}</RequirePermission> : home} />
-        {portal === 'admin' && ADMIN_PAGES.map(([path, perms, el]) => <Route key={path} path={path} element={<RequirePermission anyOf={perms}>{el}</RequirePermission>} />)}
-        {NAV[portal].filter((i) => i.to !== `/${portal}` && !(portal === 'admin' && BUILT.has(i.to))).map((i) => (
+        {PAGES[portal].map(([path, perms, el]) => <Route key={path} path={path} element={<RequirePermission anyOf={perms}>{el}</RequirePermission>} />)}
+        {NAV[portal].filter((i) => i.to !== `/${portal}` && !BUILT_ALL[portal].has(i.to)).map((i) => (
           <Route key={i.to} path={i.to.replace(`/${portal}/`, '')}
             element={<RequirePermission anyOf={i.anyOf ?? []}><ComingSoon titleKey={i.key} /></RequirePermission>} />
         ))}

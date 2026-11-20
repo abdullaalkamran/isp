@@ -164,7 +164,13 @@
     "deactivate": "Deactivate",
     "archive": "Archive",
     "confirmStatus": "Change status to “{{status}}”?",
-    "archiveNote": "Archived customers are hidden from the main list. Billing history is kept."
+    "archiveNote": "Archived customers are hidden from the main list. Billing history is kept.",
+    "portalLogin": "Portal login",
+    "hasLogin": "Has a login",
+    "noLogin": "No login",
+    "createLogin": "Create login",
+    "loginNote": "Creates a login for the customer portal: Customer ID plus the password below. Share the password securely; the customer can change it after signing in.",
+    "loginCreated": "Login created. Share these details with the customer (the password is not shown again):"
   },
   "subscriptions": {
     "subtitle": "Assign packages and manage service status",
@@ -552,5 +558,14 @@
     "syncAll": "Sync all routers",
     "processed": "{{n}} command(s) processed",
     "syncQueued": "Sync queued for {{count}} router(s)"
+  },
+  "profile": {
+    "changePassword": "Change password",
+    "newPassword": "New password",
+    "confirmPassword": "Confirm password",
+    "mismatch": "Passwords do not match",
+    "passwordChanged": "Password updated",
+    "saved": "Saved",
+    "phoneHint": "Contact your provider to change your registered mobile number."
   }
 }

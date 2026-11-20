@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import { dhakaLocalToIso, isoToDhakaLocal } from './InstallationsPage'
 import { parseSetting } from './SettingsPage'
+import { nextJobStatuses } from '@/features/portal/WorkerPages'
 import { validHost, validPort } from './RoutersPage'
 import { generatePassword, validPppoeUser } from './PppoePage'
 
@@ -34,5 +35,12 @@ describe('network form validation', () => {
   it('validates PPPoE usernames', () => { expect(validPppoeUser('user.01@isp')).toBe(true); expect(validPppoeUser('ab')).toBe(false); expect(validPppoeUser('a b c')).toBe(false) })
   it('generates passwords of the right length without look-alikes', () => {
     const p = generatePassword(16); expect(p).toHaveLength(16); expect(p).not.toMatch(/[0O1lI]/)
+  })
+})
+
+describe('technician job flow', () => {
+  it('only allows forward steps', () => {
+    expect(nextJobStatuses('assigned')).toEqual(['in_progress']); expect(nextJobStatuses('in_progress')).toEqual(['completed'])
+    expect(nextJobStatuses('completed')).toEqual([]); expect(nextJobStatuses('cancelled')).toEqual([])
   })
 })

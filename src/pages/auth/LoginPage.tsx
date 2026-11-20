@@ -100,6 +100,49 @@ function StaffForm({ setError, setNotice }: FormProps) {
 
 function CustomerForm({ setError, setNotice }: FormProps) {
   const { t } = useTranslation()
+  const [mode, setMode] = useState<'id' | 'otp'>('id')
+  return (
+    <div>
+      {mode === 'id' ? <CustomerIdForm setError={setError} setNotice={setNotice} /> : <CustomerOtpForm setError={setError} setNotice={setNotice} />}
+      <button type="button" className="mt-4 w-full text-center text-sm text-primary hover:underline" onClick={() => { setMode(mode === 'id' ? 'otp' : 'id'); setError(null) }}>
+        {mode === 'id' ? t('auth.useOtp') : t('auth.useCustomerId')}
+      </button>
+    </div>
+  )
+}
+
+function CustomerIdForm({ setError, setNotice }: FormProps) {
+  const { t } = useTranslation()
+  const { signInWithCustomerId } = useAuth()
+  const navigate = useNavigate()
+  const [busy, setBusy] = useState(false)
+  const schema = z.object({ code: z.string().trim().min(1, t('validation.required')), password: z.string().min(1, t('validation.required')) })
+  const f = useForm<z.infer<typeof schema>>({ resolver: zodResolver(schema) })
+  useEffect(() => { setNotice(t('auth.customerIdHelp')) }, [setNotice, t])
+  return (
+    <form className="space-y-4" noValidate onSubmit={f.handleSubmit(async (v) => {
+      setError(null); setBusy(true)
+      try { await signInWithCustomerId(v.code, v.password); navigate('/', { replace: true }) }
+      catch (e) { const m = e instanceof Error ? e.message : ''; setError(m === 'inactive' ? t('auth.inactive') : m === 'too_many_attempts' ? t('auth.tooMany') : t('auth.invalid')) }
+      finally { setBusy(false) }
+    })}>
+      <div>
+        <Label htmlFor="cid">{t('auth.customerId')}</Label>
+        <Input id="cid" autoComplete="username" placeholder="C000001" {...f.register('code')} />
+        {f.formState.errors.code && <p className="mt-1 text-xs text-danger">{f.formState.errors.code.message}</p>}
+      </div>
+      <div>
+        <Label htmlFor="cpw">{t('auth.password')}</Label>
+        <Input id="cpw" type="password" autoComplete="current-password" {...f.register('password')} />
+        {f.formState.errors.password && <p className="mt-1 text-xs text-danger">{f.formState.errors.password.message}</p>}
+      </div>
+      <Button type="submit" className="w-full" disabled={busy}>{busy ? t('state.loading') : t('actions.signIn')}</Button>
+    </form>
+  )
+}
+
+function CustomerOtpForm({ setError, setNotice }: FormProps) {
+  const { t } = useTranslation()
   const { sendCustomerOtp, verifyCustomerOtp } = useAuth()
   const [phone, setPhone] = useState<string | null>(null)
   const [busy, setBusy] = useState(false)
