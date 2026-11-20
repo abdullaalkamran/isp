@@ -122,3 +122,26 @@ begin
   perform t_ok(n = 1, 'approved deposit reconciles the collections');
   raise notice 'COLLECTION TESTS PASSED';
 end $$;
+
+-- Migration 0013: report_rows permissions and shape -----------------------------------------------------------
+do $$
+declare admin uuid := '00000000-0000-0000-0000-0000000000e1'; sup uuid := '00000000-0000-0000-0000-0000000000e2'; tech uuid := '00000000-0000-0000-0000-0000000000e3'; r jsonb;
+begin
+  insert into auth.users (id, email) values (admin, 'admin4@x'), (sup, 'sup4@x'), (tech, 'tech4@x');
+  insert into user_roles (user_id, role_id) select admin, id from roles where code = 'super_admin';
+  insert into user_roles (user_id, role_id) select sup, id from roles where code = 'support_officer';
+  insert into user_roles (user_id, role_id) select tech, id from roles where code = 'technician';
+  perform t_as(admin);
+  r := report_rows('revenue', null, null); perform t_ok(jsonb_typeof(r) = 'array' and jsonb_array_length(r) >= 1, 'revenue report returns monthly rows');
+  r := report_rows('dues'); perform t_ok(jsonb_typeof(r) = 'array', 'dues report returns an array');
+  perform t_fails($q$ select report_rows('nonsense') $q$, 'unknown report is rejected');
+  perform t_reset();
+  perform t_as(sup);
+  perform t_fails($q$ select report_rows('revenue') $q$, 'financial reports need reports.financial');
+  perform t_fails($q$ select report_rows('new_customers') $q$, 'support officer lacks reports.view too');
+  perform t_reset();
+  perform t_as(tech);
+  perform t_fails($q$ select report_rows('new_customers') $q$, 'technician cannot read reports');
+  perform t_reset();
+  raise notice 'REPORT TESTS PASSED';
+end $$;

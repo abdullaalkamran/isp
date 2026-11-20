@@ -341,5 +341,152 @@
     "addNote": "Pick a staff member who has the Collection Agent role.",
     "areasTitle": "Areas for {{name}}",
     "areasNote": "Collections from customers in these areas are assigned to this agent."
+  },
+  "installations": {
+    "subtitle": "Installation jobs and technician scheduling",
+    "add": "New job",
+    "edit": "Edit job",
+    "searchPlaceholder": "Job no. or customer",
+    "empty": "No installation jobs yet",
+    "job": "Job",
+    "technician": "Technician",
+    "scheduled": "Scheduled",
+    "totalCount": "{{count}} jobs",
+    "statuses": {
+      "pending": "Pending",
+      "assigned": "Assigned",
+      "scheduled": "Scheduled",
+      "in_progress": "In progress",
+      "completed": "Completed",
+      "cancelled": "Cancelled"
+    },
+    "routerDetails": "Router / equipment details",
+    "workNotes": "Work notes"
+  },
+  "technicians": {
+    "subtitle": "Field technicians and their workload",
+    "add": "Add technician",
+    "empty": "No technicians yet",
+    "emptyHint": "Create a user with the Technician role under Staff Management, then add them here.",
+    "openJobs": "Open jobs",
+    "addNote": "Pick a staff member who has the Technician role."
+  },
+  "tickets": {
+    "subtitle": "Customer support requests",
+    "add": "New ticket",
+    "searchPlaceholder": "Ticket no., subject or customer",
+    "empty": "No tickets yet",
+    "no": "Ticket",
+    "subject": "Subject",
+    "priority": "Priority",
+    "category": "Category",
+    "totalCount": "{{count}} tickets",
+    "manage": "Manage ticket",
+    "resolution": "Resolution",
+    "comments": "Comments",
+    "internal": "Internal",
+    "commentPlaceholder": "Write a comment…",
+    "priorities": {
+      "low": "Low",
+      "medium": "Medium",
+      "high": "High",
+      "urgent": "Urgent"
+    },
+    "categories": {
+      "new_connection": "New connection",
+      "installation": "Installation",
+      "internet_not_working": "Internet not working",
+      "slow_internet": "Slow internet",
+      "cable_problem": "Cable problem",
+      "router_problem": "Router problem",
+      "payment_issue": "Payment issue",
+      "package_change": "Package change",
+      "disconnection_request": "Disconnection request",
+      "other": "Other"
+    }
+  },
+  "expenses": {
+    "subtitle": "Operating expenses",
+    "add": "Add expense",
+    "empty": "No expenses yet",
+    "category": "Category",
+    "approve": "Approve",
+    "totalCount": "{{count}} expenses"
+  },
+  "audit": {
+    "subtitle": "Read-only record of important changes. Entries cannot be edited or deleted.",
+    "searchPlaceholder": "Action, table or record ID",
+    "category": "Category",
+    "empty": "No audit entries",
+    "time": "Time",
+    "actor": "By",
+    "action": "Action",
+    "record": "Record",
+    "totalCount": "{{count}} entries",
+    "categories": {
+      "data": "Data",
+      "financial": "Financial",
+      "auth": "Sign-in",
+      "router": "Router"
+    },
+    "old_data": "Before",
+    "new_data": "After",
+    "metadata": "Details"
+  },
+  "notifications": {
+    "subtitle": "Your notifications and message templates",
+    "markAll": "Mark all read",
+    "mine": "My notifications",
+    "empty": "No notifications",
+    "markRead": "Mark read",
+    "templates": "Message templates",
+    "noTemplates": "No templates yet",
+    "log": "Delivery log",
+    "noLog": "Nothing sent yet",
+    "templateNote": "Use the same placeholders as the existing templates.",
+    "subject": "Subject",
+    "body": "Message"
+  },
+  "settings": {
+    "subtitle": "Company profile, billing rules and integrations",
+    "readOnly": "You can view settings but not change them.",
+    "invalid": "That value is not valid for this setting",
+    "on": "On",
+    "off": "Off",
+    "saved": "Saved",
+    "integrations": "Integrations",
+    "integrationsNote": "Only on/off and sandbox/live are set here. API keys and secrets live in the server's secret store, never in this app.",
+    "groups": {
+      "company": "Company",
+      "general": "General",
+      "billing": "Billing",
+      "services": "Services",
+      "network": "Network",
+      "security": "Security"
+    }
+  },
+  "reports": {
+    "subtitle": "Revenue, collections, dues and growth",
+    "empty": "No data for this range",
+    "names": {
+      "revenue": "Revenue by month",
+      "collections_by_method": "Collections by payment method",
+      "dues": "Outstanding dues",
+      "new_customers": "New customers by month"
+    },
+    "cols": {
+      "month": "Month",
+      "invoiced": "Invoiced",
+      "collected": "Collected",
+      "method": "Method",
+      "count": "Count",
+      "amount": "Amount",
+      "customer_code": "Customer ID",
+      "full_name": "Name",
+      "phone": "Mobile",
+      "outstanding": "Outstanding",
+      "overdue": "Overdue",
+      "oldest_due": "Oldest due date"
+    }
   }
 }

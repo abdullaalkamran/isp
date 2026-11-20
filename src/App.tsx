@@ -23,6 +23,15 @@ import { PaymentsPage } from '@/features/admin/PaymentsPage'
 import { CollectionsPage } from '@/features/admin/CollectionsPage'
 import { CollectionAgentsPage } from '@/features/admin/CollectionAgentsPage'
 import { PrintInvoicePage } from '@/pages/PrintInvoicePage'
+import { InstallationsPage } from '@/features/admin/InstallationsPage'
+import { TechniciansPage } from '@/features/admin/TechniciansPage'
+import { TicketsPage } from '@/features/admin/TicketsPage'
+import { TicketDetailPage } from '@/features/admin/TicketDetailPage'
+import { ExpensesPage } from '@/features/admin/ExpensesPage'
+import { NotificationsPage } from '@/features/admin/NotificationsPage'
+import { AuditPage } from '@/features/admin/AuditPage'
+import { SettingsPage } from '@/features/admin/SettingsPage'
+import { ReportsPage } from '@/features/admin/ReportsPage'
 import { SubscriptionsPage } from '@/features/admin/SubscriptionsPage'
 import { ServicesPage } from '@/features/admin/ServicesPage'
 import { CustomerDashboard } from '@/features/customer/CustomerDashboard'
@@ -57,6 +66,15 @@ const ADMIN_PAGES: [string, string[], React.ReactElement][] = [
   ['payments', ['payments.read'], <PaymentsPage />],
   ['collections', ['collections.read'], <CollectionsPage />],
   ['collection-agents', ['collections.manage'], <CollectionAgentsPage />],
+  ['installations', ['installations.read_all'], <InstallationsPage />],
+  ['technicians', ['staff.read', 'installations.read_all'], <TechniciansPage />],
+  ['tickets', ['tickets.read_all'], <TicketsPage />],
+  ['tickets/:id', ['tickets.read_all'], <TicketDetailPage />],
+  ['expenses', ['expenses.read'], <ExpensesPage />],
+  ['notifications', [], <NotificationsPage />],
+  ['audit', ['audit.read'], <AuditPage />],
+  ['settings', ['settings.read'], <SettingsPage />],
+  ['reports', ['reports.view'], <ReportsPage />],
   ['customers', ['customers.read_all'], <CustomersPage />],
   ['customers/:id', ['customers.read_all'], <CustomerDetailPage />],
 ]
