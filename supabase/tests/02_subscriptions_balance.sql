@@ -73,3 +73,52 @@ begin
   perform t_reset();
   raise notice 'SUBSCRIPTION/BALANCE TESTS PASSED';
 end $$;
+
+-- Migration 0012: collection summary and deposit lifecycle -------------------------------------------------
+do $$
+declare
+  admin uuid := '00000000-0000-0000-0000-0000000000d1'; agent uuid := '00000000-0000-0000-0000-0000000000d2'; other uuid := '00000000-0000-0000-0000-0000000000d3';
+  c uuid; dep uuid; n int; v numeric;
+begin
+  insert into auth.users (id, email) values (admin, 'admin3@x'), (agent, 'agent3@x'), (other, 'other3@x');
+  insert into user_roles (user_id, role_id) select admin, id from roles where code = 'super_admin';
+  insert into user_roles (user_id, role_id) select agent, id from roles where code = 'collection_agent';
+  insert into user_roles (user_id, role_id) select other, id from roles where code = 'collection_agent';
+  perform t_as(admin);
+  insert into customers (full_name, phone, status, assigned_collection_agent_id) values ('Coll Test', '01911000001', 'active', agent) returning id into c;
+  perform t_reset();
+
+  perform t_as(agent);
+  perform record_payment(c, 700, 'cash');
+  perform t_reset();
+  perform t_as(admin);
+  select o_total into v from collection_summary(null, null) where o_agent_id = agent;
+  perform t_ok(v = 700, 'collection_summary totals the agent''s cash');
+  perform t_reset();
+  perform t_as(agent);
+  perform t_fails('select collection_summary(null, null)', 'agent cannot read the all-agent summary');
+  perform t_fails(format('select submit_cash_deposit(500, null, null)'), 'deposit must equal the cash held');
+  dep := submit_cash_deposit(700, 'bank slip 1', null);
+  perform t_fails(format('select reconcile_deposit(%L, true, null)', dep), 'agent cannot reconcile their own deposit');
+  perform t_reset();
+  select count(*) into n from cash_collections where agent_id = agent and status = 'deposited' and deposit_id = dep;
+  perform t_ok(n = 1, 'deposit links the held collections');
+  perform t_as(other);
+  perform t_fails('select submit_cash_deposit(1, null, null)', 'agent with nothing held cannot deposit');
+  perform t_reset();
+  perform t_as(admin);
+  perform reconcile_deposit(dep, false, 'wrong amount');
+  perform t_reset();
+  select count(*) into n from cash_collections where agent_id = agent and status = 'held' and deposit_id is null;
+  perform t_ok(n = 1, 'rejected deposit returns cash to held');
+  perform t_as(agent);
+  dep := submit_cash_deposit(700, 'bank slip 2', null);
+  perform t_reset();
+  perform t_as(admin);
+  perform reconcile_deposit(dep, true, null);
+  perform t_fails(format('select reconcile_deposit(%L, true, null)', dep), 'a deposit can only be reconciled once');
+  perform t_reset();
+  select count(*) into n from cash_collections where agent_id = agent and status = 'reconciled';
+  perform t_ok(n = 1, 'approved deposit reconciles the collections');
+  raise notice 'COLLECTION TESTS PASSED';
+end $$;

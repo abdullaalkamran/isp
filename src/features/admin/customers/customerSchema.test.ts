@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest'
+import { knownErrorKey } from '@/lib/errors'
 import { customerSchema, emptyCustomer, normalizePhone, searchTerm, toCustomerRow } from './customerSchema'
 
 const ok = { ...emptyCustomer, full_name: 'রহিম', phone: '01712345678' }
@@ -21,5 +22,13 @@ describe('customer form', () => {
   it('strips PostgREST filter delimiters from search text', () => {
     expect(searchTerm(' a,b(c)%d* ')).toBe('a b c d')
     expect(searchTerm('০১৭')).toBe('017')
+  })
+})
+
+describe('known database errors', () => {
+  it('maps constraint names to friendly keys', () => {
+    expect(knownErrorKey('duplicate key value violates unique constraint "payments_method_reference_uq"')).toBe('errors.duplicateReference')
+    expect(knownErrorKey('duplicate key value violates unique constraint "invoice_items_no_double_billing"')).toBe('errors.alreadyBilled')
+    expect(knownErrorKey('something else')).toBeNull()
   })
 })

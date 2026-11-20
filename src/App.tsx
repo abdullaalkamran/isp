@@ -16,6 +16,13 @@ import { AreasPage } from '@/features/admin/AreasPage'
 import { PackagesPage } from '@/features/admin/PackagesPage'
 import { CustomersPage } from '@/features/admin/customers/CustomersPage'
 import { CustomerDetailPage } from '@/features/admin/customers/CustomerDetailPage'
+import { BillingPage } from '@/features/admin/BillingPage'
+import { InvoicesPage } from '@/features/admin/InvoicesPage'
+import { InvoiceDetailPage } from '@/features/admin/InvoiceDetailPage'
+import { PaymentsPage } from '@/features/admin/PaymentsPage'
+import { CollectionsPage } from '@/features/admin/CollectionsPage'
+import { CollectionAgentsPage } from '@/features/admin/CollectionAgentsPage'
+import { PrintInvoicePage } from '@/pages/PrintInvoicePage'
 import { SubscriptionsPage } from '@/features/admin/SubscriptionsPage'
 import { ServicesPage } from '@/features/admin/ServicesPage'
 import { CustomerDashboard } from '@/features/customer/CustomerDashboard'
@@ -44,6 +51,12 @@ const ADMIN_PAGES: [string, string[], React.ReactElement][] = [
   ['packages', ['packages.manage', 'subscriptions.read'], <PackagesPage />],
   ['services', ['subscriptions.read'], <ServicesPage />],
   ['subscriptions', ['subscriptions.read'], <SubscriptionsPage />],
+  ['billing', ['billing.generate'], <BillingPage />],
+  ['invoices', ['invoices.read'], <InvoicesPage />],
+  ['invoices/:id', ['invoices.read'], <InvoiceDetailPage />],
+  ['payments', ['payments.read'], <PaymentsPage />],
+  ['collections', ['collections.read'], <CollectionsPage />],
+  ['collection-agents', ['collections.manage'], <CollectionAgentsPage />],
   ['customers', ['customers.read_all'], <CustomersPage />],
   ['customers/:id', ['customers.read_all'], <CustomerDetailPage />],
 ]
@@ -72,6 +85,7 @@ export default function App() {
     <Routes>
       <Route path="/" element={<Home />} />
       <Route path="/login" element={<LoginPage />} />
+      <Route path="/print/invoice/:id" element={<PrintInvoicePage />} />
       {portalRoutes('admin', <DashboardPage />)}
       {portalRoutes('worker', <WorkerDashboard />)}
       {portalRoutes('customer', <CustomerDashboard />)}

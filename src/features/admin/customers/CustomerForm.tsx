@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useTranslation } from 'react-i18next'
@@ -12,23 +12,10 @@ import { Input } from '@/components/ui/input'
 import { Modal } from '@/components/ui/dialog'
 import { Field, selectCls, ServerError } from '@/components/FormBits'
 import { useAreas } from '../AreasPage'
+import { useStaffByRole } from '../useStaff'
 import { customerSchema, emptyCustomer, toCustomerRow, type CustomerForm as Values } from './customerSchema'
 
 interface Existing { id: string }
-
-/** Staff of a given role (needs staff.read; the dropdown simply stays empty without it). */
-function useStaffByRole(role: string, enabled: boolean) {
-  return useQuery({
-    queryKey: ['staff-by-role', role], enabled,
-    queryFn: async () => {
-      const { data, error } = await supabase.from('profiles')
-        .select('id, full_name, user_roles!user_roles_user_id_fkey!inner(roles!inner(code))')
-        .eq('is_active', true).eq('user_roles.roles.code', role)
-      if (error) throw error
-      return (data ?? []) as unknown as { id: string; full_name: string }[]
-    },
-  })
-}
 
 export function CustomerFormModal({ open, onClose, customer, onSaved }: {
   open: boolean; onClose: () => void; customer?: Existing | null; onSaved?: (id: string) => void

@@ -34,3 +34,14 @@ export function useCustomerList(f: CustomerFilters) {
     },
   })
 }
+
+/** Builds a PostgREST .or() filter matching `columns` by text OR customer_id among customers matching the text. */
+export async function orWithCustomers(rawTerm: string, columns: string[]) {
+  const term = searchTerm(rawTerm)
+  if (!term) return null
+  const { data, error } = await supabase.from('customers').select('id')
+    .or(`full_name.ilike.%${term}%,phone.ilike.%${term}%,customer_code.ilike.%${term}%`).limit(100)
+  if (error) throw error
+  const ids = (data ?? []).map((c) => c.id as string)
+  return [...columns.map((c) => `${c}.ilike.%${term}%`), ids.length ? `customer_id.in.(${ids.join(',')})` : ''].filter(Boolean).join(',')
+}
