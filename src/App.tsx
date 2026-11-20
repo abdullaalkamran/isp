@@ -32,6 +32,9 @@ import { NotificationsPage } from '@/features/admin/NotificationsPage'
 import { AuditPage } from '@/features/admin/AuditPage'
 import { SettingsPage } from '@/features/admin/SettingsPage'
 import { ReportsPage } from '@/features/admin/ReportsPage'
+import { NetworkPage } from '@/features/admin/NetworkPage'
+import { RoutersPage } from '@/features/admin/RoutersPage'
+import { PppoePage } from '@/features/admin/PppoePage'
 import { SubscriptionsPage } from '@/features/admin/SubscriptionsPage'
 import { ServicesPage } from '@/features/admin/ServicesPage'
 import { CustomerDashboard } from '@/features/customer/CustomerDashboard'
@@ -75,6 +78,9 @@ const ADMIN_PAGES: [string, string[], React.ReactElement][] = [
   ['audit', ['audit.read'], <AuditPage />],
   ['settings', ['settings.read'], <SettingsPage />],
   ['reports', ['reports.view'], <ReportsPage />],
+  ['network', ['network.read'], <NetworkPage />],
+  ['routers', ['network.read'], <RoutersPage />],
+  ['pppoe', ['network.read'], <PppoePage />],
   ['customers', ['customers.read_all'], <CustomersPage />],
   ['customers/:id', ['customers.read_all'], <CustomerDetailPage />],
 ]

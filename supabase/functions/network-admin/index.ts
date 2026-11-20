@@ -1,0 +1,91 @@
+// Router/PPPoE administration that needs the service role. The browser never reads credential tables.
+// Auth: caller's JWT -> my_access() permissions. Deploy with "Verify JWT" OFF (this function authenticates itself).
+// Secrets required: ROUTER_CRED_KEY (base64, 32 random bytes). SUPABASE_URL / ANON / SERVICE_ROLE are injected.
+import { createClient } from 'npm:@supabase/supabase-js@2'
+import { encryptSecret } from '../_shared/crypto.ts'
+
+const cors = { 'Access-Control-Allow-Origin': '*', 'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type', 'Access-Control-Allow-Methods': 'POST, OPTIONS' }
+const json = (b: unknown, s = 200) => new Response(JSON.stringify(b), { status: s, headers: { ...cors, 'Content-Type': 'application/json' } })
+const USER = /^[A-Za-z0-9._@-]{3,64}$/
+
+Deno.serve(async (req) => {
+  if (req.method === 'OPTIONS') return new Response('ok', { headers: cors })
+  if (req.method !== 'POST') return json({ error: 'method_not_allowed' }, 405)
+  const url = Deno.env.get('SUPABASE_URL')!, anon = Deno.env.get('SUPABASE_ANON_KEY')!, service = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
+  const key = Deno.env.get('ROUTER_CRED_KEY')
+  const auth = req.headers.get('Authorization') ?? ''
+  if (!auth) return json({ error: 'unauthorized' }, 401)
+  const asCaller = createClient(url, anon, { global: { headers: { Authorization: auth } }, auth: { persistSession: false } })
+  const { data: access } = await asCaller.rpc('my_access')
+  if (!access || !access.is_active) return json({ error: 'unauthorized' }, 401)
+  const perms = access.permissions as string[]
+  const admin = createClient(url, service, { auth: { persistSession: false } })
+  let b: Record<string, unknown>
+  try { b = await req.json() } catch { return json({ error: 'invalid_json' }, 400) }
+  const action = String(b.action ?? '')
+  const audit = (act: string, record: string, metadata: Record<string, unknown> = {}) =>
+    admin.from('audit_logs').insert({ actor_id: access.user_id, category: 'router', action: act, table_name: 'routers', record_id: record, metadata })
+
+  // Which routers have credentials stored (booleans only; never the values)
+  if (action === 'credentials_status') {
+    if (!perms.includes('network.read')) return json({ error: 'forbidden' }, 403)
+    const { data } = await admin.from('router_credentials').select('router_id, updated_at')
+    return json({ routers: data ?? [] })
+  }
+
+  if (action === 'set_credentials') {
+    if (!perms.includes('network.credentials')) return json({ error: 'forbidden' }, 403)
+    const routerId = String(b.router_id ?? ''), username = String(b.username ?? '').trim(), password = String(b.password ?? '')
+    if (!routerId || !username || !password) return json({ error: 'router_username_password_required' }, 400)
+    if (!key) return json({ error: 'server_not_configured: ROUTER_CRED_KEY is not set' }, 500)
+    const enc = await encryptSecret(password, key)
+    const { error } = await admin.from('router_credentials').upsert({ router_id: routerId, api_username: username, encrypted_password: enc, updated_at: new Date().toISOString() })
+    if (error) return json({ error: error.message }, 400)
+    await admin.from('routers').update({ status: 'offline' }).eq('id', routerId).eq('status', 'unconfigured')
+    await audit('router_credentials_set', routerId)
+    return json({ ok: true })
+  }
+
+  // Create (or re-sync) a PPPoE account for a subscription and queue the router command
+  if (action === 'create_pppoe' || action === 'set_pppoe_password') {
+    if (!perms.includes('network.manage')) return json({ error: 'forbidden' }, 403)
+    const password = String(b.password ?? '')
+    if (password.length < 6) return json({ error: 'password_too_short' }, 400)
+    if (!key) return json({ error: 'server_not_configured: ROUTER_CRED_KEY is not set' }, 500)
+    let accountId = String(b.account_id ?? '')
+    if (action === 'create_pppoe') {
+      const subId = String(b.subscription_id ?? ''), routerId = String(b.router_id ?? ''), username = String(b.username ?? '').trim()
+      if (!USER.test(username)) return json({ error: 'invalid_username' }, 400)
+      const { data: sub } = await admin.from('subscriptions').select('id, service_type, status, package_id').eq('id', subId).single()
+      if (!sub || sub.service_type !== 'internet') return json({ error: 'subscription_must_be_internet' }, 400)
+      if (sub.status === 'cancelled') return json({ error: 'subscription_cancelled' }, 400)
+      const { data: pkg } = await admin.from('packages').select('router_profile, download_mbps, upload_mbps').eq('id', sub.package_id).single()
+      const { data: acc, error } = await admin.from('mikrotik_accounts').insert({
+        subscription_id: subId, router_id: routerId, pppoe_username: username, router_profile: pkg?.router_profile ?? null,
+        download_mbps: pkg?.download_mbps ?? null, upload_mbps: pkg?.upload_mbps ?? null, static_ip: b.static_ip ? String(b.static_ip) : null,
+      }).select('id').single()
+      if (error) return json({ error: error.message }, 400)
+      accountId = acc.id as string
+      await admin.from('subscriptions').update({ router_id: routerId, mikrotik_account_id: accountId }).eq('id', subId)
+    }
+    const { data: acct } = await admin.from('mikrotik_accounts').select('id, router_id').eq('id', accountId).single()
+    if (!acct) return json({ error: 'account_not_found' }, 404)
+    const { error: se } = await admin.from('mikrotik_account_secrets').upsert({ account_id: accountId, encrypted_password: await encryptSecret(password, key), updated_at: new Date().toISOString() })
+    if (se) return json({ error: se.message }, 400)
+    await admin.rpc('enqueue_network_command', { p_router: acct.router_id, p_account: accountId, p_type: 'create_account', p_payload: {}, p_key: `create:${accountId}:${Date.now()}`, p_by: access.user_id })
+    await audit(action === 'create_pppoe' ? 'pppoe_created' : 'pppoe_password_set', accountId)
+    return json({ ok: true, account_id: accountId })
+  }
+
+  // Queue a non-secret command (ping / sync_sessions / disconnect_session)
+  if (action === 'enqueue') {
+    if (!perms.includes('network.manage')) return json({ error: 'forbidden' }, 403)
+    const type = String(b.type ?? '')
+    if (!['ping', 'sync_sessions', 'disconnect_session'].includes(type)) return json({ error: 'invalid_type' }, 400)
+    const routerId = String(b.router_id ?? ''); const accountId = b.account_id ? String(b.account_id) : null
+    const { error } = await admin.rpc('enqueue_network_command', { p_router: routerId, p_account: accountId, p_type: type, p_payload: {}, p_key: `${type}:${routerId}:${accountId ?? ''}:${Date.now()}`, p_by: access.user_id })
+    if (error) return json({ error: error.message }, 400)
+    return json({ ok: true })
+  }
+  return json({ error: 'unknown_action' }, 400)
+})

@@ -145,3 +145,39 @@ begin
   perform t_reset();
   raise notice 'REPORT TESTS PASSED';
 end $$;
+
+-- Migration 0014: queue claim / completion ---------------------------------------------------------------------
+do $$
+declare admin uuid := '00000000-0000-0000-0000-0000000000f1'; tech uuid := '00000000-0000-0000-0000-0000000000f2'; r uuid; id1 uuid; n int; st text; at int;
+begin
+  insert into auth.users (id, email) values (admin, 'admin5@x'), (tech, 'tech5@x');
+  insert into user_roles (user_id, role_id) select admin, id from roles where code = 'super_admin';
+  insert into user_roles (user_id, role_id) select tech, id from roles where code = 'technician';
+  insert into routers (name, host) values ('R-queue', '10.0.0.9') returning id into r;
+  id1 := enqueue_network_command(r, null, 'ping', '{}', 'test-claim-1');
+  perform enqueue_network_command(r, null, 'ping', '{}', 'test-claim-1');           -- idempotent: same key adds nothing
+  select count(*) into n from network_commands where idempotency_key = 'test-claim-1'; perform t_ok(n = 1, 'enqueue is idempotent per key');
+
+  select count(*) into n from claim_network_commands(5) where id = id1; perform t_ok(n = 1, 'claim returns the due command');
+  select status, attempts into st, at from network_commands where id = id1; perform t_ok(st = 'running' and at = 1, 'claimed command is running with attempts=1');
+  select count(*) into n from claim_network_commands(5) where id = id1; perform t_ok(n = 0, 'a running command is not claimed twice');
+
+  perform complete_network_command(id1, false, null, 'timeout');
+  select status into st from network_commands where id = id1; perform t_ok(st = 'queued', 'first failure re-queues with backoff');
+  perform t_ok((select next_attempt_at > now() from network_commands where id = id1), 'backoff pushes next_attempt_at into the future');
+  update network_commands set attempts = max_attempts, status = 'running' where id = id1;
+  perform complete_network_command(id1, false, null, 'still down');
+  select status into st from network_commands where id = id1; perform t_ok(st = 'failed', 'gives up after max_attempts');
+
+  perform t_as(admin); perform retry_network_command(id1); perform t_reset();
+  select status into st from network_commands where id = id1; perform t_ok(st = 'queued', 'admin can retry a failed command');
+  perform complete_network_command(id1, true, '{"ok":true}', null);
+  select status into st from network_commands where id = id1; perform t_ok(st = 'succeeded', 'success is recorded');
+
+  perform t_as(tech);
+  perform t_fails(format('select retry_network_command(%L)', id1), 'technician cannot retry commands');
+  perform t_fails('select * from claim_network_commands(1)', 'clients cannot claim queue commands');
+  perform t_fails(format('select complete_network_command(%L, true, null, null)', id1), 'clients cannot complete queue commands');
+  perform t_reset();
+  raise notice 'NETWORK QUEUE TESTS PASSED';
+end $$;
