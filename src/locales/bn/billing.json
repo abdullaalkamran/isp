@@ -1,0 +1,21 @@
+{
+  "invoice": "ইনভয়েস",
+  "invoiceNo": "ইনভয়েস নং",
+  "billingPeriod": "বিলিং সময়কাল",
+  "dueDate": "পরিশোধের শেষ তারিখ",
+  "previousBalance": "পূর্বের বকেয়া",
+  "currentCharges": "চলতি চার্জ",
+  "discounts": "ছাড়",
+  "fees": "অতিরিক্ত ফি",
+  "tax": "কর",
+  "total": "মোট",
+  "paid": "পরিশোধিত অর্থ",
+  "remaining": "বকেয়ার পরিমাণ",
+  "preview": "বিলিং প্রিভিউ",
+  "generate": "ইনভয়েস তৈরি করুন",
+  "report": {
+    "created": "তৈরি হয়েছে",
+    "skipped": "বাদ দেওয়া হয়েছে",
+    "failed": "ব্যর্থ"
+  }
+}

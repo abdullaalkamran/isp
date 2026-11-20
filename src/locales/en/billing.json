@@ -1,0 +1,21 @@
+{
+  "invoice": "Invoice",
+  "invoiceNo": "Invoice No.",
+  "billingPeriod": "Billing period",
+  "dueDate": "Due date",
+  "previousBalance": "Previous balance",
+  "currentCharges": "Current charges",
+  "discounts": "Discounts",
+  "fees": "Additional fees",
+  "tax": "Tax",
+  "total": "Total",
+  "paid": "Amount paid",
+  "remaining": "Outstanding amount",
+  "preview": "Billing preview",
+  "generate": "Generate invoices",
+  "report": {
+    "created": "Created",
+    "skipped": "Skipped",
+    "failed": "Failed"
+  }
+}

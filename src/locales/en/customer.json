@@ -1,0 +1,22 @@
+{
+  "dashboard": {
+    "welcome": "Welcome, {{name}}",
+    "customerId": "Customer ID",
+    "cableStatus": "Cable TV",
+    "internetStatus": "Internet",
+    "currentPackages": "Current packages",
+    "monthlyCharges": "Monthly charges",
+    "outstanding": "Outstanding amount",
+    "nextDue": "Next due date",
+    "recentPayments": "Recent payments",
+    "openTickets": "Open support tickets",
+    "noServices": "No active services",
+    "noPayments": "No payments yet",
+    "noDue": "Nothing due",
+    "notLinked": "Your login is not linked to a customer record yet.",
+    "linkHelp": "Verify your registered mobile number to link your account.",
+    "linkAccount": "Link my account",
+    "linked": "Account linked.",
+    "payNow": "Pay now"
+  }
+}

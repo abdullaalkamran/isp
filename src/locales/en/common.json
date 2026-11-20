@@ -1,0 +1,176 @@
+{
+  "app": {
+    "name": "ISP Manager",
+    "tagline": "Cable TV & Internet management"
+  },
+  "actions": {
+    "save": "Save",
+    "cancel": "Cancel",
+    "edit": "Edit",
+    "delete": "Delete",
+    "archive": "Archive",
+    "search": "Search",
+    "filter": "Filter",
+    "export": "Export",
+    "print": "Print",
+    "back": "Back",
+    "confirm": "Confirm",
+    "retry": "Try again",
+    "apply": "Apply",
+    "reset": "Reset",
+    "signIn": "Sign in",
+    "signOut": "Sign out",
+    "add": "Add",
+    "view": "View",
+    "close": "Close"
+  },
+  "state": {
+    "loading": "Loading…",
+    "empty": "Nothing to show yet",
+    "error": "Something went wrong",
+    "noResults": "No results match your filters",
+    "notConfigured": "Not configured"
+  },
+  "language": {
+    "label": "Language",
+    "bn": "বাংলা",
+    "en": "English"
+  },
+  "auth": {
+    "title": "Sign in to your account",
+    "staffTab": "Staff",
+    "customerTab": "Customer",
+    "email": "Email",
+    "emailPlaceholder": "name@company.com",
+    "password": "Password",
+    "phone": "Mobile number",
+    "phonePlaceholder": "01XXXXXXXXX",
+    "customerId": "Customer ID",
+    "sendOtp": "Send OTP",
+    "otp": "One-time code",
+    "verifyOtp": "Verify",
+    "forgot": "Forgot password?",
+    "resetSent": "If the account exists, a reset link has been sent.",
+    "invalid": "Incorrect credentials. Please try again.",
+    "inactive": "This account is deactivated. Contact your administrator.",
+    "otpSent": "We sent a code to your phone.",
+    "otpProvider": "SMS delivery depends on the configured SMS provider.",
+    "noRole": "Your account has no assigned role yet. Contact your administrator.",
+    "signedOut": "You have been signed out.",
+    "resetPrompt": "Enter your email above first.",
+    "changeNumber": "Use a different number",
+    "customerHelp": "Use the mobile number registered with your cable/internet provider."
+  },
+  "nav": {
+    "dashboard": "Dashboard",
+    "customers": "Customers",
+    "services": "Services",
+    "packages": "Packages",
+    "subscriptions": "Subscriptions",
+    "billing": "Billing",
+    "invoices": "Invoices",
+    "payments": "Payments",
+    "collections": "Collections",
+    "collectionAgents": "Collection Agents",
+    "networkManagement": "Network Management",
+    "routers": "MikroTik Routers",
+    "pppoe": "PPPoE Accounts",
+    "installationJobs": "Installation Jobs",
+    "technicians": "Technicians",
+    "supportTickets": "Support Tickets",
+    "staff": "Staff Management",
+    "areas": "Areas",
+    "expenses": "Expenses",
+    "reports": "Reports",
+    "notifications": "Notifications",
+    "auditLogs": "Audit Logs",
+    "settings": "Settings",
+    "assignedCustomers": "Assigned Customers",
+    "assignedTasks": "Assigned Tasks",
+    "paymentReceipts": "Payment Receipts",
+    "myProfile": "My Profile",
+    "myServices": "My Services",
+    "billsInvoices": "Bills & Invoices",
+    "payBill": "Pay Bill",
+    "paymentHistory": "Payment History",
+    "support": "Support",
+    "adminPortal": "Admin Portal",
+    "workerPortal": "Staff Portal",
+    "customerPortal": "Customer Portal",
+    "menu": "Menu",
+    "collapse": "Collapse sidebar"
+  },
+  "status": {
+    "active": "Active",
+    "inactive": "Inactive",
+    "suspended": "Suspended",
+    "pending": "Pending",
+    "archived": "Archived",
+    "expired": "Expired",
+    "cancelled": "Cancelled",
+    "draft": "Draft",
+    "issued": "Issued",
+    "partially_paid": "Partially paid",
+    "paid": "Paid",
+    "overdue": "Overdue",
+    "open": "Open",
+    "assigned": "Assigned",
+    "in_progress": "In progress",
+    "waiting_customer": "Waiting for customer",
+    "escalated": "Escalated",
+    "resolved": "Resolved",
+    "closed": "Closed",
+    "online": "Online",
+    "offline": "Offline",
+    "failed": "Failed",
+    "verified": "Verified"
+  },
+  "service": {
+    "cable_tv": "Cable TV",
+    "internet": "Internet"
+  },
+  "roles": {
+    "super_admin": "Super Admin",
+    "administrator": "Administrator",
+    "accountant": "Accountant",
+    "billing_officer": "Billing Officer",
+    "collection_agent": "Collection Agent",
+    "technician": "Technician",
+    "support_officer": "Support Officer",
+    "customer": "Customer"
+  },
+  "forbidden": {
+    "title": "Access denied",
+    "body": "You do not have permission to open this page."
+  },
+  "notFound": {
+    "title": "Page not found",
+    "body": "The page you are looking for does not exist."
+  },
+  "comingSoon": {
+    "title": "This module is on the build roadmap",
+    "body": "The database tables, permissions and security rules for this module are already in place. Its screens are scheduled for a later phase."
+  },
+  "config": {
+    "missingTitle": "Supabase is not configured",
+    "missingBody": "Copy .env.example to .env and set VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY, then restart the dev server."
+  },
+  "profileMenu": {
+    "profile": "Profile",
+    "account": "Account"
+  },
+  "search": {
+    "global": "Search customers, invoices…"
+  },
+  "notificationsCenter": {
+    "title": "Notifications",
+    "none": "No notifications"
+  },
+  "validation": {
+    "required": "This field is required",
+    "email": "Enter a valid email address",
+    "phone": "Enter a valid Bangladeshi mobile number (01XXXXXXXXX)",
+    "otp": "Enter the 6-digit code",
+    "passwordMin": "Password must be at least 8 characters"
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "methods": {
+    "cash": "Cash",
+    "bkash": "bKash",
+    "nagad": "Nagad",
+    "rocket": "Rocket",
+    "bank_transfer": "Bank transfer",
+    "gateway": "Online payment",
+    "other": "Other"
+  },
+  "successful": "Payment successful",
+  "failed": "Payment failed",
+  "method": "Payment method",
+  "receipt": "Receipt",
+  "sandboxBanner": "Sandbox mode: live payment processing is not enabled."
+}

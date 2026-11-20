@@ -1,0 +1,11 @@
+{
+  "dashboard": {
+    "title": "My work",
+    "subtitle": "Tasks and customers assigned to you",
+    "assignedCustomers": "Assigned customers",
+    "openTickets": "Open tickets",
+    "pendingJobs": "Pending jobs",
+    "todayCollected": "Collected today",
+    "noTasks": "No tasks assigned to you"
+  }
+}

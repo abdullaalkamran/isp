@@ -1,0 +1,11 @@
+{
+  "dashboard": {
+    "title": "আমার কাজ",
+    "subtitle": "আপনাকে নির্ধারিত কাজ ও গ্রাহক",
+    "assignedCustomers": "নির্ধারিত গ্রাহক",
+    "openTickets": "খোলা টিকেট",
+    "pendingJobs": "অপেক্ষমাণ কাজ",
+    "todayCollected": "আজ আদায়",
+    "noTasks": "আপনাকে কোনো কাজ দেওয়া হয়নি"
+  }
+}

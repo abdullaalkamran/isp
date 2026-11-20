@@ -1,0 +1,6 @@
+{
+  "router": "Router",
+  "disconnected": "Disconnected / test environment",
+  "internetSuspended": "Internet Suspended",
+  "notConfigured": "No router credentials are configured. Router operations are disabled and are not simulated."
+}

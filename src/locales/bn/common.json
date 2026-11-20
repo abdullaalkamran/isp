@@ -1,0 +1,176 @@
+{
+  "app": {
+    "name": "আইএসপি ম্যানেজার",
+    "tagline": "কেবল টিভি ও ইন্টারনেট ব্যবস্থাপনা"
+  },
+  "actions": {
+    "save": "সংরক্ষণ করুন",
+    "cancel": "বাতিল",
+    "edit": "সম্পাদনা",
+    "delete": "মুছুন",
+    "archive": "আর্কাইভ",
+    "search": "খুঁজুন",
+    "filter": "ফিল্টার",
+    "export": "এক্সপোর্ট",
+    "print": "প্রিন্ট",
+    "back": "ফিরে যান",
+    "confirm": "নিশ্চিত করুন",
+    "retry": "আবার চেষ্টা করুন",
+    "apply": "প্রয়োগ করুন",
+    "reset": "রিসেট",
+    "signIn": "সাইন ইন",
+    "signOut": "সাইন আউট",
+    "add": "যোগ করুন",
+    "view": "দেখুন",
+    "close": "বন্ধ করুন"
+  },
+  "state": {
+    "loading": "লোড হচ্ছে…",
+    "empty": "এখনও দেখানোর মতো কিছু নেই",
+    "error": "কিছু একটা সমস্যা হয়েছে",
+    "noResults": "আপনার ফিল্টারের সাথে মিলে এমন কিছু পাওয়া যায়নি",
+    "notConfigured": "কনফিগার করা হয়নি"
+  },
+  "language": {
+    "label": "ভাষা",
+    "bn": "বাংলা",
+    "en": "English"
+  },
+  "auth": {
+    "title": "আপনার অ্যাকাউন্টে সাইন ইন করুন",
+    "staffTab": "কর্মী",
+    "customerTab": "গ্রাহক",
+    "email": "ইমেইল",
+    "emailPlaceholder": "name@company.com",
+    "password": "পাসওয়ার্ড",
+    "phone": "মোবাইল নম্বর",
+    "phonePlaceholder": "01XXXXXXXXX",
+    "customerId": "গ্রাহক আইডি",
+    "sendOtp": "ওটিপি পাঠান",
+    "otp": "ওয়ান-টাইম কোড",
+    "verifyOtp": "যাচাই করুন",
+    "forgot": "পাসওয়ার্ড ভুলে গেছেন?",
+    "resetSent": "অ্যাকাউন্টটি থাকলে একটি রিসেট লিংক পাঠানো হয়েছে।",
+    "invalid": "তথ্য সঠিক নয়। আবার চেষ্টা করুন।",
+    "inactive": "এই অ্যাকাউন্টটি নিষ্ক্রিয় করা হয়েছে। অ্যাডমিনের সাথে যোগাযোগ করুন।",
+    "otpSent": "আপনার ফোনে একটি কোড পাঠানো হয়েছে।",
+    "otpProvider": "এসএমএস পৌঁছানো নির্ভর করে কনফিগার করা এসএমএস প্রদানকারীর উপর।",
+    "noRole": "আপনার অ্যাকাউন্টে এখনও কোনো ভূমিকা দেওয়া হয়নি। অ্যাডমিনের সাথে যোগাযোগ করুন।",
+    "signedOut": "আপনি সাইন আউট করেছেন।",
+    "resetPrompt": "আগে উপরে আপনার ইমেইল দিন।",
+    "changeNumber": "অন্য নম্বর ব্যবহার করুন",
+    "customerHelp": "আপনার কেবল/ইন্টারনেট সেবাদাতার কাছে নিবন্ধিত মোবাইল নম্বর ব্যবহার করুন।"
+  },
+  "nav": {
+    "dashboard": "ড্যাশবোর্ড",
+    "customers": "গ্রাহক",
+    "services": "সেবা",
+    "packages": "প্যাকেজ",
+    "subscriptions": "সাবস্ক্রিপশন",
+    "billing": "বিলিং",
+    "invoices": "ইনভয়েস",
+    "payments": "পেমেন্ট",
+    "collections": "কালেকশন",
+    "collectionAgents": "কালেকশন এজেন্ট",
+    "networkManagement": "নেটওয়ার্ক ব্যবস্থাপনা",
+    "routers": "মাইক্রোটিক রাউটার",
+    "pppoe": "পিপিপিওই অ্যাকাউন্ট",
+    "installationJobs": "ইনস্টলেশন কাজ",
+    "technicians": "টেকনিশিয়ান",
+    "supportTickets": "সাপোর্ট টিকেট",
+    "staff": "কর্মী ব্যবস্থাপনা",
+    "areas": "এলাকা",
+    "expenses": "খরচ",
+    "reports": "রিপোর্ট",
+    "notifications": "নোটিফিকেশন",
+    "auditLogs": "অডিট লগ",
+    "settings": "সেটিংস",
+    "assignedCustomers": "নির্ধারিত গ্রাহক",
+    "assignedTasks": "নির্ধারিত কাজ",
+    "paymentReceipts": "পেমেন্ট রশিদ",
+    "myProfile": "আমার প্রোফাইল",
+    "myServices": "আমার সেবা",
+    "billsInvoices": "বিল ও ইনভয়েস",
+    "payBill": "বিল পরিশোধ",
+    "paymentHistory": "পেমেন্টের ইতিহাস",
+    "support": "সহায়তা",
+    "adminPortal": "অ্যাডমিন পোর্টাল",
+    "workerPortal": "কর্মী পোর্টাল",
+    "customerPortal": "গ্রাহক পোর্টাল",
+    "menu": "মেনু",
+    "collapse": "সাইডবার ছোট করুন"
+  },
+  "status": {
+    "active": "সক্রিয়",
+    "inactive": "নিষ্ক্রিয়",
+    "suspended": "স্থগিত",
+    "pending": "অপেক্ষমাণ",
+    "archived": "আর্কাইভড",
+    "expired": "মেয়াদোত্তীর্ণ",
+    "cancelled": "বাতিল",
+    "draft": "খসড়া",
+    "issued": "ইস্যু করা হয়েছে",
+    "partially_paid": "আংশিক পরিশোধিত",
+    "paid": "পরিশোধিত",
+    "overdue": "বকেয়া",
+    "open": "খোলা",
+    "assigned": "নির্ধারিত",
+    "in_progress": "চলমান",
+    "waiting_customer": "গ্রাহকের অপেক্ষায়",
+    "escalated": "উচ্চস্তরে প্রেরিত",
+    "resolved": "সমাধান হয়েছে",
+    "closed": "বন্ধ",
+    "online": "অনলাইন",
+    "offline": "অফলাইন",
+    "failed": "ব্যর্থ",
+    "verified": "যাচাইকৃত"
+  },
+  "service": {
+    "cable_tv": "কেবল টিভি",
+    "internet": "ইন্টারনেট"
+  },
+  "roles": {
+    "super_admin": "সুপার অ্যাডমিন",
+    "administrator": "অ্যাডমিনিস্ট্রেটর",
+    "accountant": "হিসাবরক্ষক",
+    "billing_officer": "বিলিং কর্মকর্তা",
+    "collection_agent": "কালেকশন এজেন্ট",
+    "technician": "টেকনিশিয়ান",
+    "support_officer": "সাপোর্ট অফিসার",
+    "customer": "গ্রাহক"
+  },
+  "forbidden": {
+    "title": "প্রবেশাধিকার নেই",
+    "body": "এই পৃষ্ঠা খোলার অনুমতি আপনার নেই।"
+  },
+  "notFound": {
+    "title": "পৃষ্ঠা পাওয়া যায়নি",
+    "body": "আপনি যে পৃষ্ঠাটি খুঁজছেন সেটি নেই।"
+  },
+  "comingSoon": {
+    "title": "এই মডিউলটি নির্মাণ পরিকল্পনায় আছে",
+    "body": "এই মডিউলের ডাটাবেস টেবিল, অনুমতি ও নিরাপত্তা নিয়ম ইতিমধ্যে প্রস্তুত। এর স্ক্রিনগুলো পরবর্তী ধাপে তৈরি হবে।"
+  },
+  "config": {
+    "missingTitle": "সুপাবেস কনফিগার করা হয়নি",
+    "missingBody": ".env.example ফাইলটি .env নামে কপি করে VITE_SUPABASE_URL ও VITE_SUPABASE_ANON_KEY দিন, তারপর ডেভ সার্ভার আবার চালু করুন।"
+  },
+  "profileMenu": {
+    "profile": "প্রোফাইল",
+    "account": "অ্যাকাউন্ট"
+  },
+  "search": {
+    "global": "গ্রাহক, ইনভয়েস খুঁজুন…"
+  },
+  "notificationsCenter": {
+    "title": "নোটিফিকেশন",
+    "none": "কোনো নোটিফিকেশন নেই"
+  },
+  "validation": {
+    "required": "এই ঘরটি পূরণ করা আবশ্যক",
+    "email": "সঠিক ইমেইল ঠিকানা দিন",
+    "phone": "সঠিক বাংলাদেশি মোবাইল নম্বর দিন (01XXXXXXXXX)",
+    "otp": "৬ অঙ্কের কোডটি দিন",
+    "passwordMin": "পাসওয়ার্ড কমপক্ষে ৮ অক্ষরের হতে হবে"
+  }
+}
