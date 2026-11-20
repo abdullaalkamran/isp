@@ -69,5 +69,55 @@
     "resetPassword": "Reset password",
     "deactivate": "Deactivate",
     "activate": "Activate"
+  },
+  "shared": {
+    "all": "All",
+    "activate": "Activate",
+    "deactivate": "Deactivate"
+  },
+  "areas": {
+    "subtitle": "Service areas and coverage",
+    "add": "Add area",
+    "edit": "Edit area",
+    "empty": "No areas yet",
+    "code": "Code",
+    "name": "Name",
+    "nameBn": "Name (Bangla)",
+    "coverage": "Coverage",
+    "nodes": "Network nodes",
+    "description": "Description",
+    "codeFormat": "Use letters, numbers, - or _ only",
+    "confirmDeactivate": "Deactivate this area?",
+    "confirmActivate": "Activate this area?"
+  },
+  "packages": {
+    "subtitle": "Cable TV and internet packages",
+    "add": "Add package",
+    "edit": "Edit package",
+    "empty": "No packages yet",
+    "name": "Package",
+    "type": "Service",
+    "plan": "Plan",
+    "price": "Monthly price",
+    "installCharge": "Installation charge",
+    "channels": "channels",
+    "download": "Download (Mbps)",
+    "upload": "Upload (Mbps)",
+    "unlimited": "Unlimited data",
+    "dataLimit": "Data limit (GB)",
+    "routerProfile": "Router profile",
+    "staticIp": "Static IP available",
+    "connectionType": "Connection type",
+    "priceInvalid": "Enter a valid amount (0 or more)",
+    "intInvalid": "Enter a whole number",
+    "confirmDeactivate": "Deactivate this package?",
+    "confirmActivate": "Activate this package?",
+    "deactivateNote": "New subscriptions can no longer use it. Existing subscriptions keep their price."
+  },
+  "services": {
+    "subtitle": "Overview of your services",
+    "activePackages": "Active packages",
+    "priceRange": "Price range",
+    "subscribers": "Subscribers"
   }
 }

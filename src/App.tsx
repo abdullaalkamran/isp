@@ -12,6 +12,9 @@ import { RequirePermission, RequirePortal } from '@/features/guards'
 import { LoginPage } from '@/pages/auth/LoginPage'
 import { WorkerDashboard } from '@/features/worker/WorkerDashboard'
 import { StaffPage } from '@/features/admin/StaffPage'
+import { AreasPage } from '@/features/admin/AreasPage'
+import { PackagesPage } from '@/features/admin/PackagesPage'
+import { ServicesPage } from '@/features/admin/ServicesPage'
 import { CustomerDashboard } from '@/features/customer/CustomerDashboard'
 import type { Portal } from '@/types'
 
@@ -32,14 +35,22 @@ function NotFound() {
   return <EmptyState title={t('notFound.title')} body={t('notFound.body')} />
 }
 
+const ADMIN_PAGES: [string, string[], React.ReactElement][] = [
+  ['staff', ['staff.read'], <StaffPage />],
+  ['areas', ['areas.manage', 'customers.read_all'], <AreasPage />],
+  ['packages', ['packages.manage', 'subscriptions.read'], <PackagesPage />],
+  ['services', ['subscriptions.read'], <ServicesPage />],
+]
+const BUILT = new Set(ADMIN_PAGES.map(([p]) => `/admin/${p}`))
+
 /** Every nav entry gets a permission-guarded route; modules not yet built show an honest roadmap notice. */
 function portalRoutes(portal: Portal, home: React.ReactElement) {
   return (
     <Route path={`/${portal}`} element={<RequirePortal portal={portal} />}>
       <Route element={<PortalLayout portal={portal} />}>
         <Route index element={portal === 'admin' ? <RequirePermission anyOf={['dashboard.view']}>{home}</RequirePermission> : home} />
-        {portal === 'admin' && <Route path="staff" element={<RequirePermission anyOf={['staff.read']}><StaffPage /></RequirePermission>} />}
-        {NAV[portal].filter((i) => i.to !== `/${portal}` && i.to !== '/admin/staff').map((i) => (
+        {portal === 'admin' && ADMIN_PAGES.map(([path, perms, el]) => <Route key={path} path={path} element={<RequirePermission anyOf={perms}>{el}</RequirePermission>} />)}
+        {NAV[portal].filter((i) => i.to !== `/${portal}` && !(portal === 'admin' && BUILT.has(i.to))).map((i) => (
           <Route key={i.to} path={i.to.replace(`/${portal}/`, '')}
             element={<RequirePermission anyOf={i.anyOf ?? []}><ComingSoon titleKey={i.key} /></RequirePermission>} />
         ))}
