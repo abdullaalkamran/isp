@@ -163,5 +163,35 @@
     "archive": "Archive",
     "confirmStatus": "Change status to “{{status}}”?",
     "archiveNote": "Archived customers are hidden from the main list. Billing history is kept."
+  },
+  "subscriptions": {
+    "subtitle": "Assign packages and manage service status",
+    "add": "Add subscription",
+    "addNote": "The price is taken from the package at the time of creation. The subscription starts as pending; activate it when the service is connected.",
+    "empty": "No subscriptions yet",
+    "searchPlaceholder": "Subscription no., customer name or phone",
+    "no": "Subscription",
+    "expiry": "Expiry",
+    "start": "Start date",
+    "cycle": "Billing cycle",
+    "cycles": {
+      "monthly": "Monthly",
+      "quarterly": "Quarterly",
+      "yearly": "Yearly"
+    },
+    "reason": "Reason (optional)",
+    "total": "{{count}} subscriptions",
+    "confirmStatus": "Set {{no}} to “{{status}}”?",
+    "cancelNote": "Cancelling is permanent. The router account will be disabled.",
+    "suspendNote": "The router account will be suspended.",
+    "changeTitle": "Change package for {{no}}",
+    "changeNote": "The subscription takes the new package's price from now on. Existing invoices are not changed.",
+    "act": {
+      "activate": "Activate",
+      "suspend": "Suspend",
+      "reactivate": "Reactivate",
+      "cancel": "Cancel",
+      "change": "Change package"
+    }
   }
 }
