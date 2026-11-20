@@ -48,7 +48,7 @@ React + TypeScript + Vite + Tailwind, Supabase (PostgreSQL, Auth, RLS, Edge Func
 | `payment-init` | Starts an online payment (amount computed server-side) | **OFF** | `SITE_URL` + provider secrets |
 | `payment-webhook` | Provider callbacks → verifies with the provider → `finalize_gateway_payment()` | **OFF** (public) | `SITE_URL` + provider secrets |
 
-Each function folder also needs `supabase/functions/_shared/*` (the dashboard editor: paste the shared file contents into the function, or deploy with the CLI: `npx supabase functions deploy <name> --project-ref <ref> --no-verify-jwt`).
+**Dashboard editor:** paste the ready-made single-file bundle from `supabase/dashboard/<name>.ts` (shared code already inlined). After changing anything under `supabase/functions/`, regenerate them with `npm run bundle:functions`. **CLI alternative:** `npx supabase functions deploy <name> --project-ref <ref> --no-verify-jwt`.
 
 ### Secrets (Supabase → Edge Functions → Secrets)
 
