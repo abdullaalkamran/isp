@@ -11,6 +11,7 @@ import { useAuth } from '@/features/auth'
 import { RequirePermission, RequirePortal } from '@/features/guards'
 import { LoginPage } from '@/pages/auth/LoginPage'
 import { WorkerDashboard } from '@/features/worker/WorkerDashboard'
+import { StaffPage } from '@/features/admin/StaffPage'
 import { CustomerDashboard } from '@/features/customer/CustomerDashboard'
 import type { Portal } from '@/types'
 
@@ -37,7 +38,8 @@ function portalRoutes(portal: Portal, home: React.ReactElement) {
     <Route path={`/${portal}`} element={<RequirePortal portal={portal} />}>
       <Route element={<PortalLayout portal={portal} />}>
         <Route index element={portal === 'admin' ? <RequirePermission anyOf={['dashboard.view']}>{home}</RequirePermission> : home} />
-        {NAV[portal].filter((i) => i.to !== `/${portal}`).map((i) => (
+        {portal === 'admin' && <Route path="staff" element={<RequirePermission anyOf={['staff.read']}><StaffPage /></RequirePermission>} />}
+        {NAV[portal].filter((i) => i.to !== `/${portal}` && i.to !== '/admin/staff').map((i) => (
           <Route key={i.to} path={i.to.replace(`/${portal}/`, '')}
             element={<RequirePermission anyOf={i.anyOf ?? []}><ComingSoon titleKey={i.key} /></RequirePermission>} />
         ))}

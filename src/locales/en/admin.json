@@ -50,5 +50,24 @@
     "allServices": "All services",
     "branch": "Branch"
   },
-  "revenueNote": "Collections are money received, not profit."
+  "revenueNote": "Collections are money received, not profit.",
+  "users": {
+    "subtitle": "Create and manage admin and staff accounts",
+    "add": "Add user",
+    "create": "Create account",
+    "fullName": "Full name",
+    "email": "Email",
+    "phone": "Mobile",
+    "password": "Password",
+    "role": "Role",
+    "language": "Language",
+    "empty": "No staff accounts yet",
+    "created": "Account created",
+    "roleChanged": "Role updated",
+    "passwordChanged": "Password updated",
+    "statusChanged": "Status updated",
+    "resetPassword": "Reset password",
+    "deactivate": "Deactivate",
+    "activate": "Activate"
+  }
 }

@@ -1,0 +1,106 @@
+// Admin-only user management. Runs with the service-role key (injected by Supabase, never sent to the browser).
+// The caller must be signed in AND hold the `staff.manage` permission (checked via the my_access() RPC with their own JWT).
+import { createClient } from 'npm:@supabase/supabase-js@2'
+
+const cors = {
+  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+  'Access-Control-Allow-Methods': 'POST, OPTIONS',
+}
+const json = (body: unknown, status = 200) =>
+  new Response(JSON.stringify(body), { status, headers: { ...cors, 'Content-Type': 'application/json' } })
+
+const ASSIGNABLE = ['super_admin', 'administrator', 'accountant', 'billing_officer', 'collection_agent', 'technician', 'support_officer']
+const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+
+Deno.serve(async (req) => {
+  if (req.method === 'OPTIONS') return new Response('ok', { headers: cors })
+  if (req.method !== 'POST') return json({ error: 'method_not_allowed' }, 405)
+
+  const url = Deno.env.get('SUPABASE_URL')!
+  const anon = Deno.env.get('SUPABASE_ANON_KEY')!
+  const service = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
+  const authHeader = req.headers.get('Authorization') ?? ''
+  if (!authHeader) return json({ error: 'unauthorized' }, 401)
+
+  // 1. Who is calling, and may they manage staff?
+  const asCaller = createClient(url, anon, { global: { headers: { Authorization: authHeader } }, auth: { persistSession: false } })
+  const { data: access, error: accessErr } = await asCaller.rpc('my_access')
+  if (accessErr || !access) return json({ error: 'unauthorized' }, 401)
+  if (!access.is_active || !(access.permissions as string[]).includes('staff.manage')) return json({ error: 'forbidden' }, 403)
+  const callerIsSuper = (access.roles as string[]).includes('super_admin')
+  const callerId = access.user_id as string
+
+  const admin = createClient(url, service, { auth: { persistSession: false } })
+  let body: Record<string, unknown>
+  try { body = await req.json() } catch { return json({ error: 'invalid_json' }, 400) }
+  const action = String(body.action ?? '')
+
+  const roleId = async (code: string) => (await admin.from('roles').select('id').eq('code', code).single()).data?.id as string | undefined
+  const targetIsSuper = async (userId: string) => {
+    const { data } = await admin.from('user_roles').select('roles!inner(code)').eq('user_id', userId).eq('roles.code', 'super_admin')
+    return (data?.length ?? 0) > 0
+  }
+  const audit = (act: string, record: string, metadata: Record<string, unknown> = {}) =>
+    admin.from('audit_logs').insert({ actor_id: callerId, category: 'data', action: act, table_name: 'profiles', record_id: record, metadata })
+
+  if (action === 'create') {
+    const email = String(body.email ?? '').trim().toLowerCase()
+    const password = String(body.password ?? '')
+    const fullName = String(body.full_name ?? '').trim()
+    const phone = body.phone ? String(body.phone).trim() : null
+    const role = String(body.role ?? '')
+    const language = body.language === 'en' ? 'en' : 'bn'
+    if (!EMAIL.test(email)) return json({ error: 'invalid_email' }, 400)
+    if (password.length < 8) return json({ error: 'password_too_short' }, 400)
+    if (!fullName) return json({ error: 'name_required' }, 400)
+    if (!ASSIGNABLE.includes(role)) return json({ error: 'invalid_role' }, 400)
+    if (role === 'super_admin' && !callerIsSuper) return json({ error: 'only_super_admin_can_grant_super_admin' }, 403)
+    const rid = await roleId(role)
+    if (!rid) return json({ error: 'role_not_found' }, 400)
+
+    const { data, error } = await admin.auth.admin.createUser({
+      email, password, email_confirm: true, user_metadata: { full_name: fullName },
+    })
+    if (error || !data.user) return json({ error: error?.message ?? 'create_failed' }, 400)
+    const uid = data.user.id
+    // handle_new_user() has created the profile; fill in the rest
+    const upd = await admin.from('profiles').update({ full_name: fullName, phone, language }).eq('id', uid)
+    const ins = await admin.from('user_roles').insert({ user_id: uid, role_id: rid, assigned_by: callerId })
+    if (upd.error || ins.error) {
+      await admin.auth.admin.deleteUser(uid) // don't leave a half-created, role-less account behind
+      return json({ error: (upd.error ?? ins.error)!.message }, 400)
+    }
+    await audit('user_created', uid, { role, email })
+    return json({ user_id: uid })
+  }
+
+  if (action === 'set_password') {
+    const userId = String(body.user_id ?? '')
+    const password = String(body.password ?? '')
+    if (password.length < 8) return json({ error: 'password_too_short' }, 400)
+    if (!userId) return json({ error: 'user_required' }, 400)
+    if ((await targetIsSuper(userId)) && !callerIsSuper) return json({ error: 'only_super_admin_can_change_super_admin' }, 403)
+    const { error } = await admin.auth.admin.updateUserById(userId, { password })
+    if (error) return json({ error: error.message }, 400)
+    await audit('user_password_reset', userId)
+    return json({ ok: true })
+  }
+
+  if (action === 'set_role') {
+    const userId = String(body.user_id ?? '')
+    const role = String(body.role ?? '')
+    if (!ASSIGNABLE.includes(role)) return json({ error: 'invalid_role' }, 400)
+    if (userId === callerId) return json({ error: 'cannot_change_own_role' }, 400)
+    if ((role === 'super_admin' || (await targetIsSuper(userId))) && !callerIsSuper) return json({ error: 'only_super_admin_can_change_super_admin' }, 403)
+    const rid = await roleId(role)
+    if (!rid) return json({ error: 'role_not_found' }, 400)
+    const del = await admin.from('user_roles').delete().eq('user_id', userId)
+    const ins = await admin.from('user_roles').insert({ user_id: userId, role_id: rid, assigned_by: callerId })
+    if (del.error || ins.error) return json({ error: (del.error ?? ins.error)!.message }, 400)
+    await audit('user_role_changed', userId, { role })
+    return json({ ok: true })
+  }
+
+  return json({ error: 'unknown_action' }, 400)
+})
