@@ -181,3 +181,18 @@ begin
   perform t_reset();
   raise notice 'NETWORK QUEUE TESTS PASSED';
 end $$;
+
+-- Function privilege review for migrations 0010-0014 -------------------------------------------------------------
+do $$
+declare f text;
+begin
+  for f in select unnest(array['customer_balance(uuid)', 'collection_summary(date,date)', 'submit_cash_deposit(numeric,text,text)', 'reconcile_deposit(uuid,boolean,text)',
+                               'report_rows(text,date,date)', 'retry_network_command(uuid)']) loop
+    perform t_ok(has_function_privilege('authenticated', f, 'execute'), f || ' is callable by signed-in users');
+    perform t_ok(not has_function_privilege('anon', f, 'execute'), f || ' is NOT callable anonymously');
+  end loop;
+  for f in select unnest(array['claim_network_commands(int)', 'complete_network_command(uuid,boolean,jsonb,text)', 'finalize_gateway_payment(uuid,text,jsonb,boolean)', 'fail_gateway_payment(uuid,jsonb)']) loop
+    perform t_ok(not has_function_privilege('authenticated', f, 'execute') and not has_function_privilege('anon', f, 'execute'), f || ' is service-role only');
+  end loop;
+  raise notice 'PRIVILEGE REVIEW PASSED';
+end $$;

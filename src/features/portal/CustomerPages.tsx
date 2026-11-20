@@ -6,6 +6,7 @@ import { supabase } from '@/lib/supabase'
 import { useAuth } from '@/features/auth'
 import { formatCurrency, formatDate } from '@/lib/format'
 import { useFriendlyError } from '@/lib/useFriendlyError'
+import { callFn } from '@/features/admin/networkApi'
 import type { Lang } from '@/lib/i18n'
 import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
@@ -87,19 +88,36 @@ export function CustomerInvoicesPage() {
 }
 
 export function CustomerPayPage() {
-  const { t } = useTranslation(['customer', 'common', 'admin']); const lang = useLang()
+  const { t } = useTranslation(['customer', 'common', 'admin']); const lang = useLang(); const friendly = useFriendlyError()
+  const status = new URLSearchParams(window.location.search).get('status')
+  const [picked, setPicked] = useState<string[] | null>(null); const [err, setErr] = useState<string | null>(null)
   const q = useQuery({ queryKey: ['customer', 'due'], queryFn: async () => {
     const { data, error } = await supabase.from('invoices').select('id, invoice_no, due_date, status, balance_due').in('status', ['issued', 'partially_paid', 'overdue']).gt('balance_due', 0).order('due_date')
     if (error) throw error; return data } })
-  const total = (q.data ?? []).reduce((s, i) => s + n(i.balance_due), 0)
+  const providers = useQuery({ queryKey: ['customer', 'providers'], retry: false, queryFn: async () => (await callFn<{ providers: string[] }>('payment-init', { action: 'providers' })).providers })
+  const ids = picked ?? (q.data ?? []).map((i) => i.id)
+  const total = (q.data ?? []).filter((i) => ids.includes(i.id)).reduce((s, i) => s + n(i.balance_due), 0)
+  const start = useMutation({
+    mutationFn: async (provider: string) => (await callFn<{ redirect_url: string }>('payment-init', { provider, invoice_ids: ids })).redirect_url,
+    onSuccess: (url) => { window.location.href = url }, onError: (e) => setErr(friendly(e)),
+  })
+  const banner = status === 'success' ? ['green', t('customer:pay.success')] : status === 'failed' ? ['red', t('customer:pay.failed')] : status === 'cancelled' ? ['red', t('customer:pay.cancelled')] : status === 'error' ? ['red', t('customer:pay.error')] : null
   return (
     <div>
       <PageHeader title={t('common:nav.payBill')} subtitle={t('customer:pay.subtitle')} />
+      {banner && <p role="status" className={`mb-4 rounded-md border px-3 py-2 text-sm ${banner[0] === 'green' ? 'border-green-200 bg-green-50 text-green-900' : 'border-red-200 bg-red-50 text-red-900'}`}>{banner[1]}</p>}
       {q.isLoading ? <LoadingBlock /> : q.isError ? <ErrorState error={q.error} onRetry={() => void q.refetch()} /> : !q.data?.length ? <EmptyState title={t('customer:dashboard.noDue')} /> : (<>
-        <Card className="mb-4 overflow-x-auto"><table className="w-full text-sm"><tbody>{q.data.map((i) => (<tr key={i.id} className="border-b last:border-0"><td className="p-3 font-mono text-xs">{i.invoice_no}</td><td className="p-3">{formatDate(i.due_date, lang)}</td>
+        <Card className="mb-4 overflow-x-auto"><table className="w-full text-sm"><tbody>{q.data.map((i) => (<tr key={i.id} className="border-b last:border-0">
+          <td className="p-3"><input type="checkbox" aria-label={i.invoice_no} checked={ids.includes(i.id)} onChange={(e) => setPicked(e.target.checked ? [...ids, i.id] : ids.filter((x) => x !== i.id))} /></td>
+          <td className="p-3 font-mono text-xs">{i.invoice_no}</td><td className="p-3">{formatDate(i.due_date, lang)}</td>
           <td className="p-3"><StatusBadge status={i.status} /></td><td className="p-3 text-right">{formatCurrency(n(i.balance_due), lang)}</td></tr>))}</tbody></table></Card>
-        <p className="mb-3 text-lg font-semibold">{t('customer:dashboard.outstanding')}: {formatCurrency(total, lang)}</p>
-        <p role="note" className="rounded-md border bg-muted/50 px-3 py-2 text-sm">{t('customer:pay.offline')}</p></>)}
+        <p className="mb-3 text-lg font-semibold">{t('customer:pay.toPay')}: {formatCurrency(total, lang)}</p>
+        <ServerError message={err} />
+        {providers.data?.length ? (
+          <div className="flex flex-wrap gap-2">{providers.data.map((p) => (
+            <Button key={p} disabled={start.isPending || total <= 0} onClick={() => { setErr(null); start.mutate(p) }}>{t('customer:pay.with', { provider: t(`customer:pay.providers.${p}`, { defaultValue: p }) })}</Button>))}</div>
+        ) : <p role="note" className="rounded-md border bg-muted/50 px-3 py-2 text-sm">{t('customer:pay.offline')}</p>}
+        <p className="mt-3 text-xs text-muted-foreground">{t('customer:pay.secureNote')}</p></>)}
     </div>
   )
 }

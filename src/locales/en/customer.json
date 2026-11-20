@@ -35,7 +35,19 @@
   },
   "pay": {
     "subtitle": "Your unpaid bills",
-    "offline": "Online payment is not available yet. Please pay your bill to our collection agent or office; your balance updates as soon as the payment is recorded."
+    "offline": "Online payment is not available yet. Please pay your bill to our collection agent or office; your balance updates as soon as the payment is recorded.",
+    "toPay": "Amount to pay",
+    "with": "Pay with {{provider}}",
+    "providers": {
+      "sslcommerz": "card / mobile banking (SSLCommerz)",
+      "bkash": "bKash",
+      "nagad": "Nagad"
+    },
+    "success": "Payment received. Your balance will update in a moment.",
+    "failed": "The payment was not completed. You have not been charged, or the provider has not confirmed it yet.",
+    "cancelled": "Payment cancelled.",
+    "error": "We could not confirm the payment. If money was deducted, contact us with your reference.",
+    "secureNote": "You will be sent to the payment provider. Your payment is credited only after we confirm it directly with the provider."
   },
   "payments": {
     "subtitle": "Payments we have recorded for you"

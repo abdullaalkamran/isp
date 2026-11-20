@@ -10,41 +10,53 @@ import { portalFor, portalHome } from '@/lib/access'
 import { useAuth } from '@/features/auth'
 import { RequirePermission, RequirePortal } from '@/features/guards'
 import { LoginPage } from '@/pages/auth/LoginPage'
-import { WorkerDashboard } from '@/features/worker/WorkerDashboard'
-import { StaffPage } from '@/features/admin/StaffPage'
-import { AreasPage } from '@/features/admin/AreasPage'
-import { PackagesPage } from '@/features/admin/PackagesPage'
-import { CustomersPage } from '@/features/admin/customers/CustomersPage'
-import { CustomerDetailPage } from '@/features/admin/customers/CustomerDetailPage'
-import { BillingPage } from '@/features/admin/BillingPage'
-import { InvoicesPage } from '@/features/admin/InvoicesPage'
-import { InvoiceDetailPage } from '@/features/admin/InvoiceDetailPage'
-import { PaymentsPage } from '@/features/admin/PaymentsPage'
-import { CollectionsPage } from '@/features/admin/CollectionsPage'
-import { CollectionAgentsPage } from '@/features/admin/CollectionAgentsPage'
-import { PrintInvoicePage } from '@/pages/PrintInvoicePage'
-import { InstallationsPage } from '@/features/admin/InstallationsPage'
-import { TechniciansPage } from '@/features/admin/TechniciansPage'
-import { TicketsPage } from '@/features/admin/TicketsPage'
-import { TicketDetailPage } from '@/features/admin/TicketDetailPage'
-import { ExpensesPage } from '@/features/admin/ExpensesPage'
-import { NotificationsPage } from '@/features/admin/NotificationsPage'
-import { AuditPage } from '@/features/admin/AuditPage'
-import { SettingsPage } from '@/features/admin/SettingsPage'
-import { ReportsPage } from '@/features/admin/ReportsPage'
-import { NetworkPage } from '@/features/admin/NetworkPage'
-import { RoutersPage } from '@/features/admin/RoutersPage'
-import { PppoePage } from '@/features/admin/PppoePage'
-import { CustomerServicesPage, CustomerPackagesPage, CustomerInvoicesPage, CustomerPayPage, CustomerPaymentsPage, CustomerSupportPage } from '@/features/portal/CustomerPages'
-import { CustomerProfilePage, WorkerProfilePage } from '@/features/portal/ProfilePages'
-import { WorkerCustomersPage, WorkerTasksPage, WorkerInstallationsPage, WorkerTicketsPage, WorkerCollectionsPage, WorkerReceiptsPage } from '@/features/portal/WorkerPages'
-import { SubscriptionsPage } from '@/features/admin/SubscriptionsPage'
-import { ServicesPage } from '@/features/admin/ServicesPage'
-import { CustomerDashboard } from '@/features/customer/CustomerDashboard'
 import type { Portal } from '@/types'
 
-// Recharts is heavy: load the admin dashboard on demand
-const DashboardPage = lazy(() => import('@/features/admin/DashboardPage').then((m) => ({ default: m.DashboardPage })))
+/** Every page is its own chunk, loaded when its route is first visited. */
+const lazyPage = <K extends string>(load: () => Promise<Record<K, React.ComponentType>>, name: K) => lazy(() => load().then((m) => ({ default: m[name] })))
+const DashboardPage = lazyPage(() => import('@/features/admin/DashboardPage'), 'DashboardPage')
+const WorkerDashboard = lazyPage(() => import('@/features/worker/WorkerDashboard'), 'WorkerDashboard')
+const StaffPage = lazyPage(() => import('@/features/admin/StaffPage'), 'StaffPage')
+const AreasPage = lazyPage(() => import('@/features/admin/AreasPage'), 'AreasPage')
+const PackagesPage = lazyPage(() => import('@/features/admin/PackagesPage'), 'PackagesPage')
+const CustomersPage = lazyPage(() => import('@/features/admin/customers/CustomersPage'), 'CustomersPage')
+const CustomerDetailPage = lazyPage(() => import('@/features/admin/customers/CustomerDetailPage'), 'CustomerDetailPage')
+const BillingPage = lazyPage(() => import('@/features/admin/BillingPage'), 'BillingPage')
+const InvoicesPage = lazyPage(() => import('@/features/admin/InvoicesPage'), 'InvoicesPage')
+const InvoiceDetailPage = lazyPage(() => import('@/features/admin/InvoiceDetailPage'), 'InvoiceDetailPage')
+const PaymentsPage = lazyPage(() => import('@/features/admin/PaymentsPage'), 'PaymentsPage')
+const CollectionsPage = lazyPage(() => import('@/features/admin/CollectionsPage'), 'CollectionsPage')
+const CollectionAgentsPage = lazyPage(() => import('@/features/admin/CollectionAgentsPage'), 'CollectionAgentsPage')
+const PrintInvoicePage = lazyPage(() => import('@/pages/PrintInvoicePage'), 'PrintInvoicePage')
+const InstallationsPage = lazyPage(() => import('@/features/admin/InstallationsPage'), 'InstallationsPage')
+const TechniciansPage = lazyPage(() => import('@/features/admin/TechniciansPage'), 'TechniciansPage')
+const TicketsPage = lazyPage(() => import('@/features/admin/TicketsPage'), 'TicketsPage')
+const TicketDetailPage = lazyPage(() => import('@/features/admin/TicketDetailPage'), 'TicketDetailPage')
+const ExpensesPage = lazyPage(() => import('@/features/admin/ExpensesPage'), 'ExpensesPage')
+const NotificationsPage = lazyPage(() => import('@/features/admin/NotificationsPage'), 'NotificationsPage')
+const AuditPage = lazyPage(() => import('@/features/admin/AuditPage'), 'AuditPage')
+const SettingsPage = lazyPage(() => import('@/features/admin/SettingsPage'), 'SettingsPage')
+const ReportsPage = lazyPage(() => import('@/features/admin/ReportsPage'), 'ReportsPage')
+const NetworkPage = lazyPage(() => import('@/features/admin/NetworkPage'), 'NetworkPage')
+const RoutersPage = lazyPage(() => import('@/features/admin/RoutersPage'), 'RoutersPage')
+const PppoePage = lazyPage(() => import('@/features/admin/PppoePage'), 'PppoePage')
+const CustomerServicesPage = lazyPage(() => import('@/features/portal/CustomerPages'), 'CustomerServicesPage')
+const CustomerPackagesPage = lazyPage(() => import('@/features/portal/CustomerPages'), 'CustomerPackagesPage')
+const CustomerInvoicesPage = lazyPage(() => import('@/features/portal/CustomerPages'), 'CustomerInvoicesPage')
+const CustomerPayPage = lazyPage(() => import('@/features/portal/CustomerPages'), 'CustomerPayPage')
+const CustomerPaymentsPage = lazyPage(() => import('@/features/portal/CustomerPages'), 'CustomerPaymentsPage')
+const CustomerSupportPage = lazyPage(() => import('@/features/portal/CustomerPages'), 'CustomerSupportPage')
+const CustomerProfilePage = lazyPage(() => import('@/features/portal/ProfilePages'), 'CustomerProfilePage')
+const WorkerProfilePage = lazyPage(() => import('@/features/portal/ProfilePages'), 'WorkerProfilePage')
+const WorkerCustomersPage = lazyPage(() => import('@/features/portal/WorkerPages'), 'WorkerCustomersPage')
+const WorkerTasksPage = lazyPage(() => import('@/features/portal/WorkerPages'), 'WorkerTasksPage')
+const WorkerInstallationsPage = lazyPage(() => import('@/features/portal/WorkerPages'), 'WorkerInstallationsPage')
+const WorkerTicketsPage = lazyPage(() => import('@/features/portal/WorkerPages'), 'WorkerTicketsPage')
+const WorkerCollectionsPage = lazyPage(() => import('@/features/portal/WorkerPages'), 'WorkerCollectionsPage')
+const WorkerReceiptsPage = lazyPage(() => import('@/features/portal/WorkerPages'), 'WorkerReceiptsPage')
+const SubscriptionsPage = lazyPage(() => import('@/features/admin/SubscriptionsPage'), 'SubscriptionsPage')
+const ServicesPage = lazyPage(() => import('@/features/admin/ServicesPage'), 'ServicesPage')
+const CustomerDashboard = lazyPage(() => import('@/features/customer/CustomerDashboard'), 'CustomerDashboard')
 
 function Home() {
   const { loading, session, access } = useAuth()
@@ -121,8 +133,8 @@ function portalRoutes(portal: Portal, home: React.ReactElement) {
   return (
     <Route path={`/${portal}`} element={<RequirePortal portal={portal} />}>
       <Route element={<PortalLayout portal={portal} />}>
-        <Route index element={portal === 'admin' ? <RequirePermission anyOf={['dashboard.view']}>{home}</RequirePermission> : home} />
-        {PAGES[portal].map(([path, perms, el]) => <Route key={path} path={path} element={<RequirePermission anyOf={perms}>{el}</RequirePermission>} />)}
+        <Route index element={<Suspense fallback={<LoadingBlock />}>{portal === 'admin' ? <RequirePermission anyOf={['dashboard.view']}>{home}</RequirePermission> : home}</Suspense>} />
+        {PAGES[portal].map(([path, perms, el]) => <Route key={path} path={path} element={<RequirePermission anyOf={perms}><Suspense fallback={<LoadingBlock />}>{el}</Suspense></RequirePermission>} />)}
         {NAV[portal].filter((i) => i.to !== `/${portal}` && !BUILT_ALL[portal].has(i.to)).map((i) => (
           <Route key={i.to} path={i.to.replace(`/${portal}/`, '')}
             element={<RequirePermission anyOf={i.anyOf ?? []}><ComingSoon titleKey={i.key} /></RequirePermission>} />
